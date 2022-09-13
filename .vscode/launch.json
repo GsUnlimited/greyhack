@@ -8,7 +8,7 @@
             "type": "greyscript",
             "request": "launch",
             "name": "Ask for file name",
-            "program": "${command:AskForProgramName}"
+            "program": "${file}"
         }
     ]
 }
