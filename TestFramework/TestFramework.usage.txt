@@ -1,0 +1,15 @@
+To use this Framework you first need to make a new Testcase(1 Testcase each file you want to test)
+to do this do the following:
+yourTestCaseName = "TheName"
+yourVariable = new Testcase.constructor(yourTestCaseName)
+
+After this is done you can use this object for everything else
+every Assertion has minimum 2 parameters: 
+    - The thing you want to test also called _input
+    - The Description for this test
+Your _input has a wide possible range depending on which method you use
+Your Description should always contain the names of your variables so you can differ between your tests.
+A pattern like: "test if true is true" or "test if true is not true" is recommended(exept of true use your variableNames and what you want to test).
+
+if you got any Questions let me know
+And yes you can basically test everything with this(List and Map stuff will be coming)

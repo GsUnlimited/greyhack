@@ -1,0 +1,12 @@
+import_code("./TestFramework.src":"./TestFramework.src")
+Test1 = new TestCase.construct("TestCase_test")
+Test1.assertSame(Test1.TestName,"TestCase_test","test that TestName is properly saved")
+Test1.assertTrue(true,"test that true is true")
+Test1.assertTrue(false,"test that false is not true")
+Test1.assertFalse(false,"test that false is false")
+Test1.assertSameBaseType("some","string","test that the string 'some' is of type string ")
+a = []
+b = {}
+print(typeof(b))
+Test1.assertSameBaseType(a,"list","test that a list is of type list")
+Test1.assertNotSameBaseType(a,"map","test that a list is not of type map")
