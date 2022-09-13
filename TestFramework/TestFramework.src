@@ -1,0 +1,62 @@
+TestCase = {}
+TestCase.construct = function(TestName)
+if typeof(TestName) != "string" then
+    return exit("Testname has to be of type string you provided: "+typeof(TestName)+"")
+end if
+self.succesColor = "<color=#00ff00>"
+self.failColour = "<color=#ff0000>"
+self.TestName = TestName
+return self
+end function
+TestCase.printMessage = function(message)
+if typeof(message) != "string" then
+    return print("message has to be of type string you provided: "+typeof(message)+" at TestCase.printMessage line 12")
+end if
+print(message+"\n")
+end function
+
+
+TestCase.printSucces = function(description)
+    self.printMessage(self.succesColor+" "+self.TestName+" "+description+" PASSED.")
+end function
+
+
+TestCase.printFail = function(description)
+    self.printMessage(self.failColour+" "+self.TestName+" "+description+" FAIL.")
+end function
+
+TestCase.assertSame = function(_input,toBe,description)
+        if _input == toBe then
+            self.printSucces(description)
+        else
+            self.printFail(description)
+            self.printMessage("Expected: "+toBe+". Got: "+_input+".")
+        end if
+end function
+
+TestCase.assertTrue = function(_input,description)
+    self.assertNotSame(_input,true,description)
+end function
+
+TestCase.assertSameBaseType = function(_input,typeToBe,description)
+    _inputType = typeof(_input)
+    self.assertSame(_inputType,typeToBe,description)
+end function
+
+TestCase.assertFalse = function(_input,description)
+    self.assertSame(_input,false,description)
+end function
+
+TestCase.assertNotSameBaseType = function(_input,typeToBe,description)
+    _inputType = typeof(_input)
+    self.assertNotSame(_inputType,typeToBe,description)
+end function
+
+TestCase.assertNotSame = function(_input,toBe,description)
+    if _input != toBe then
+        self.printSucces(description)
+    else
+        self.printFail(description)
+        self.printMessage("Expected: "+toBe+". Got: "+_input+".")
+        end if
+end function
