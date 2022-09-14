@@ -3,8 +3,8 @@ TestCase.construct = function(TestName)
 if typeof(TestName) != "string" then
     return exit("Testname has to be of type string you provided: "+typeof(TestName)+"")
 end if
-self.succesColor = "<color=#00ff00>"
-self.failColour = "<color=#ff0000>"
+self._succesColor = "<color=#00ff00>"
+self._failColor = "<color=#ff0000>"
 self.TestName = TestName
 return self
 end function
@@ -17,12 +17,12 @@ end function
 
 
 TestCase.printSucces = function(description)
-    self.printMessage(self.succesColor+" "+self.TestName+" "+description+" PASSED.")
+    self.printMessage(self._succesColor+" "+self.TestName+" "+description+" PASSED.")
 end function
 
 
 TestCase.printFail = function(description)
-    self.printMessage(self.failColour+" "+self.TestName+" "+description+" FAIL.")
+    self.printMessage(self._failColor+" "+self.TestName+" "+description+" FAIL.")
 end function
 
 TestCase.assertSame = function(_input,toBe,description)
