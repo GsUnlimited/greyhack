@@ -1,7 +1,21 @@
 import_code("../LowLevelNumberSwitch/LowLevelNumberSwitch":"../LowLevelNumberSwitch/LowLevelNumberSwitch")
 UInt8 = {}
 UInt8.construct = function(arrayWithOneByte)
-bitsString = BitsString.construct(arrayWithOneByte[0])
-
+bitString = BitString.construct(arrayWithOneByte[0]).val
+dec = BitToDecInBytes(bitString,1)
+self.val = dec
+return self
+end function
+Int8 = {}
+Int8.construct = function(arrayWithOneByte)
+binaryString = BitString.construct(arrayWithOneByte[0]).val
+prefix = binaryString[0]
+binaryString[0] = "0"
+decimalWithoutPrefix = BitToDecInBytes(binaryString,1)
+if prefix == "0" then
+    return decimalWithoutPrefix * 1
+else
+    if prefix == "1" then
+    return decimalWithoutPrefix * -1
 end function
 
