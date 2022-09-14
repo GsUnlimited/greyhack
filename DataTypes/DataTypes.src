@@ -1,0 +1,7 @@
+import_code("../LowLevelNumberSwitch/LowLevelNumberSwitch":"../LowLevelNumberSwitch/LowLevelNumberSwitch")
+UInt8 = {}
+UInt8.construct = function(arrayWithOneByte)
+bitsString = BitsString.construct(arrayWithOneByte[0])
+
+end function
+
