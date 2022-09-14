@@ -35,7 +35,7 @@ TestCase.assertSame = function(_input,toBe,description)
 end function
 
 TestCase.assertTrue = function(_input,description)
-    self.assertNotSame(_input,true,description)
+    self.assertSame(_input,true,description)
 end function
 
 TestCase.assertSameBaseType = function(_input,typeToBe,description)
