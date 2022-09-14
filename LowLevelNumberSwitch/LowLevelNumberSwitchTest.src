@@ -1,35 +1,65 @@
 import_code("../TestFramework/TestFramework":"../TestFramework/TestFramework")
 import_code("./LowLevelNumberSwitch":"./LowLevelNumberSwitch")
 TestLowLevelNumberSwitch = new TestCase.construct("TestLowLevelNumberSwitch")
-hexstring= new hexString.construct("0x00")
-bitsstring = new BitsString.construct("010101")
+hexstring= new HexString.construct("0x00")
+bitsstring = new BitString.construct("010101")
+//hexString tests
 TestLowLevelNumberSwitch.assertSame(hexstring.val,"0x00","test that the hexStringConstructor safes the value of 0x00 properly and is 0x00")
 TestLowLevelNumberSwitch.assertNotSame(hexstring.val,1,"test that the hexStringConstructor safes the value of 0x00 properly and is not 1")
 TestLowLevelNumberSwitch.assertNotSame(hexstring.val,"0x01","test that the hexStringConstructor safes the value of 0x00 properly and is not 0x01")
-TestLowLevelNumberSwitch.assertSame(bitsstring.val,"010101","test that BitsString safes the value of 010101 properly and is 010101")
-TestLowLevelNumberSwitch.assertNotSame(bitsstring.val,"0x00","test that BitsString safes the value of 010101 properly and is not 0x00")
-TestLowLevelNumberSwitch.assertNotSame(bitsstring.val,1,"test that BitsString safes the value of 010101 properly and is not 1")
-TestLowLevelNumberSwitch.assertSame(ToBitsInToBytes(255,2).val,"0000000011111111","test that ToBitsInToBytes(255,2) returns the right BitsString.val of the value of 0000000011111111")
-TestLowLevelNumberSwitch.assertNotSame(ToBitsInToBytes(254,2).val,"0000000000001111","test that ToBitsInToBytes(254,2) not returns the BitsString.val of the value of 0000000000001111")
-TestLowLevelNumberSwitch.assertNotSame(ToBitsInToBytes(254,3).val,"0000000000001111","test that ToBitsInToBytes(254,3) not returns the BitsString.val of the value of 0000000000001111")
-TestLowLevelNumberSwitch.assertNotSame(ToBitsInToBytes(254,3),"00001111","test that ToBitsInToBytes(254,3) not returns the BitsString of the value of 0000000000001111")
-TestLowLevelNumberSwitch.assertSame(Byte_NumToHex("00001111",1).val,"0x0f","test that Byte_NumToHex(00001111,1).val returns the right hexString.val of the value of 0x0f")
-TestLowLevelNumberSwitch.assertSame(Byte_NumToHex("0000000000001111",2).val,"0x000f","test that Byte_NumToHex(0000000000001111,1).val returns the right hexString.val of the value of 0x000f")
-TestLowLevelNumberSwitch.assertNotSame(Byte_NumToHex("00001111",1).val,"0x0c","test that Byte_NumToHex(00001111,1).val not returns the hexString.val of the value of 0x0c")
-TestLowLevelNumberSwitch.assertNotSame(Byte_NumToHex("0000000000001111",2).val,"0x0c","test that Byte_NumToHex(0000000000001111,2).val not returns the hexString.val of the value of 0x0c")
-TestLowLevelNumberSwitch.assertNotSame(Byte_NumToHex("0000000000001111",2),"0x0c","test that Byte_NumToHex(0000000000001111,2) not returns the hexString.val of the value of 0x0c")
+//BitString tests
+TestLowLevelNumberSwitch.assertSame(bitsstring.val,"010101","test that BitString safes the value of 010101 properly and is 010101")
+TestLowLevelNumberSwitch.assertNotSame(bitsstring.val,"0x00","test that BitString safes the value of 010101 properly and is not 0x00")
+TestLowLevelNumberSwitch.assertNotSame(bitsstring.val,1,"test that BitString safes the value of 010101 properly and is not 1")
+//DecToBinInBytes tests
+TestLowLevelNumberSwitch.assertSame(DecToBinInBytes(255,2).val,"0000000011111111","test that DecToBinInBytes(255,2) returns the right BitString.val of the value of 0000000011111111")
+TestLowLevelNumberSwitch.assertNotSame(DecToBinInBytes(254,2).val,"0000000000001111","test that DecToBinInBytes(254,2) not returns the BitString.val of the value of 0000000000001111")
+TestLowLevelNumberSwitch.assertNotSame(DecToBinInBytes(254,3).val,"0000000000001111","test that DecToBinInBytes(254,3) not returns the BitString.val of the value of 0000000000001111")
+TestLowLevelNumberSwitch.assertNotSame(DecToBinInBytes(254,3),"00001111","test that DecToBinInBytes(254,3) not returns the BitString of the value of 0000000000001111")
+//BinToHexInBytes tests
+TestLowLevelNumberSwitch.assertSame(BinToHexInBytes("00001111",1).val,"0x0f","test that BinToHexInBytes(00001111,1).val returns the right hexString.val of the value of 0x0f")
+TestLowLevelNumberSwitch.assertSame(BinToHexInBytes("0000000000001111",2).val,"0x000f","test that BinToHexInBytes(0000000000001111,1).val returns the right hexString.val of the value of 0x000f")
+TestLowLevelNumberSwitch.assertNotSame(BinToHexInBytes("00001111",1).val,"0x0c","test that BinToHexInBytes (00001111,1).val not returns the hexString.val of the value of 0x0c")
+TestLowLevelNumberSwitch.assertNotSame(BinToHexInBytes("0000000000001111",2).val,"0x0c","test that BinToHexInBytes(0000000000001111,2).val not returns the hexString.val of the value of 0x0c")
+TestLowLevelNumberSwitch.assertNotSame(BinToHexInBytes("0000000000001111",2),"0x0c","test that BinToHexInBytes(0000000000001111,2) not returns the hexString.val of the value of 0x0c")
+//reusable Values
 a = ["1","1","1","1"]
 b = ["1","1","1","0"]
 c = ["1","0","1","0"]
+//nibleToDec tests
 TestLowLevelNumberSwitch.assertSame(nibleToDec(a),15,"test that nibleToDec() (1 and 0 as string) returns the same as 15")
 TestLowLevelNumberSwitch.assertSame(nibleToDec(b),14,"test that nibleToDec([1,1,1,0]) (1 and 0 as string) returns the same as 14")
 TestLowLevelNumberSwitch.assertNotSame(nibleToDec(c),14,"test that nibleToDec([1,0,1,0]) (1 and 0 as string) returns not the same as 14")
 TestLowLevelNumberSwitch.assertNotSame(nibleToDec(b),"13","test that nibleToDec([1,1,1,0]) (1 and 0 as string) returns the same as 13 ")
+//HexToNible_NOZEROX tests
 TestLowLevelNumberSwitch.assertSame(HexToNible_No_ZEROX ("f"),"1111","test that HexToNible_No_ZEROX (f) returns the same as 1111 (1 and 0 as string)")
 TestLowLevelNumberSwitch.assertSame(HexToNible_No_ZEROX ("e"),"1110","test that HexToNible_No_ZEROX (e) returns the same as 1110 (1 and 0 as string)")
 TestLowLevelNumberSwitch.assertNotSame(HexToNible_No_ZEROX ("e"),"b","test that HexToNible_No_ZEROX (e) not returns the same as b (as string)")
 TestLowLevelNumberSwitch.assertNotSame(HexToNible_No_ZEROX ("e"),c,"test that HexToNible_No_ZEROX (e) not returns the same as [1,0,1,0] (1 and 0 as string)")
-TestLowLevelNumberSwitch.assertSame(HexToBinInBytes("0x001e",2).val,"0000000000011110","test that HexToBinInBytes(0x001e,2).val not returns the same as 0000000011111110 (as string)")
+//HexToBinInBytes tests
+TestLowLevelNumberSwitch.assertSame(HexToBinInBytes("0x001e",2).val,"0000000000011110","test that HexToBinInBytes(0x001e,2).val returns the same as 0000000000011110 (as string)")
+TestLowLevelNumberSwitch.assertSame(HexToBinInBytes("0x1e",1).val,"00011110","test that HexToBinInBytes(0x1e,1).val returns the same as 00011110 (as string)")
+TestLowLevelNumberSwitch.assertSame(BitToDecInBytes(HexToBinInBytes("0x1e",1).val,1),30,"test that BitToDecInBytes(HexToBinInBytes(0x1e,1).val) returns the same as 30 (as number)")
+TestLowLevelNumberSwitch.assertNotSame(HexToBinInBytes("0x1e",1).val,30,"test that HexToBinInBytes(0x1e,1) not returns the same as 30 (as number)")
+//BitToDecInBytes tests
+TestLowLevelNumberSwitch.assertSame(BitToDecInBytes("00000001",1),1,"test that BitToDecInBytes(00000001,1)  returns the same as 1 (as number)")
+TestLowLevelNumberSwitch.assertSame(BitToDecInBytes("0000000000000001",2),1,"test that BitToDecInBytes(0000000000000001,1)  returns the same as 1 (as number)")
+TestLowLevelNumberSwitch.assertNotSame(BitToDecInBytes("00000001",1),5,"test that BitToDecInBytes(00000001,1) not returns the same as 5 (as number)")
+TestLowLevelNumberSwitch.assertNotSame(BitToDecInBytes("0000000000000001",2),20,"test that BitToDecInBytes(0000000000000001,1) not returns the same as 20 (as number)")
+//DecToHexIn8Bytes tests
+TestLowLevelNumberSwitch.assertSame(DecToHexIn8Bytes(15).val,"0x000000000000000f","test that DecToHexIn8Bytes(15).val returns the same as 0x000000000000000f (as HexString)")
+TestLowLevelNumberSwitch.assertSame(DecToHexIn8Bytes(255).val,"0x00000000000000ff","test that DecToHexIn8Bytes(255).val returns the same as 0x00000000000000ff (as HexString)")
+TestLowLevelNumberSwitch.assertSame(DecToHexIn8Bytes(30).val,"0x000000000000001e","test that DecToHexIn8Bytes(30).val returns the same as 0x000000000000001e (as HexString)")
+TestLowLevelNumberSwitch.assertNotSame(DecToHexIn8Bytes(30).val,30,"test that DecToHexIn8Bytes(30).val not returns the same as 30 (as number)")
+TestLowLevelNumberSwitch.assertNotSame(DecToHexIn8Bytes(30).val,"0x000000000001e","test that DecToHexIn8Bytes(30).val not returns the same as 0x000000000001e (as HexString)")
+TestLowLevelNumberSwitch.assertNotSame(DecToHexIn8Bytes(30).val,"fuck","test that DecToHexIn8Bytes(30).val returns the same as fuck (as String)")
+
+
+
+
+
+
+
 
 
 
