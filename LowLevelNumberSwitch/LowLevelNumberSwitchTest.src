@@ -1,5 +1,5 @@
-import_code("../TestFramework/TestFramework":"../TestFramework/TestFramework")
-import_code("./LowLevelNumberSwitch":"./LowLevelNumberSwitch")
+import_code("../TestFramework/TestFramework.src":"../TestFramework/TestFramework.src")
+import_code("./LowLevelNumberSwitch.src":"./LowLevelNumberSwitch.src")
 TestLowLevelNumberSwitch = new TestCase.construct("TestLowLevelNumberSwitch")
 hexstring= new HexString.construct("0x00")
 bitsstring = new BitString.construct("010101")
