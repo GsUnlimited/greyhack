@@ -1,1 +1,16 @@
-import_code("../TestFramework/TestFramework":"../TestFramework/TestFramework")
+import_code("../TestFramework/TestFramework.src":"../TestFramework/TestFramework.src")
+import_code("./Datatypes.src":"./Datatypes.src")
+TestDataTypes = TestCase.construct("TestDataTypes")
+// UInt8 functionality tests
+uintEight_val = new UIntEight.construct(["00000111"])
+uintEight_valTwo = new UIntEight.construct(["10001010"])
+TestDataTypes.assertSame(uintEight_val.val,7,"test that Uint8 correctly converts BitStrings to numbers(from 00000111 to 7)")
+TestDataTypes.assertSame(uintEight_valTwo.val,138,"test that Uint8 correctly converts BitStrings to numbers(from 10001010 to 138)")
+TestDataTypes.assertNotSame(uintEight_val.val,8,"test that Uint8 correctly converts BitStrings to numbers(from 00000111 not to 8)")
+TestDataTypes.assertNotSame(uintEight_val.val,"8","test that Uint8 correctly converts BitStrings to numbers(from 00000111 not to 8 as String)")// Strings and number seem to be comparibale if they result in the same number. thats why we need 8 and not 7 here
+intEight_val = new IntEight.construct(["10000111"])
+intEight_valTwo = new IntEight.construct(["00001010"])
+TestDataTypes.assertSame(intEight_val.val,-7,"test that int8 correctly converts BitStrings to numbers(from 00000111 to 7)")
+TestDataTypes.assertSame(intEight_valTwo.val,10,"test that int8 correctly converts BitStrings to numbers(from 10001010 to 138)")
+TestDataTypes.assertNotSame(intEight_val.val,8,"test that int8 correctly converts BitStrings to numbers(from 00000111 not to 8)")
+TestDataTypes.assertNotSame(intEight_val.val,"-8","test that int8 correctly converts BitStrings to numbers(from 10000111 not to -8 as String)")// Strings and number seem to be comparibale if they result in the same number. thats why we need 8 and not 7 here
