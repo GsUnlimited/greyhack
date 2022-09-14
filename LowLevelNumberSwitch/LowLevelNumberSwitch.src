@@ -1,6 +1,6 @@
 import_code("../Mathlib/Mathlib":"../Mathlib/Mathlib")
-hexString = {}
-hexString.construct = function(hexstring)
+HexString = {}
+HexString.construct = function(hexstring)
     if hexstring[0] != "0" then
         return exit("Provided Invalid HexString format. The Format is 0x(here the rest)")
     end if
@@ -10,8 +10,8 @@ hexString.construct = function(hexstring)
     self.val = hexstring
 return self
 end function
-BitsString = {}
-BitsString.construct = function(bitString)
+BitString = {}
+BitString.construct = function(bitString)
     for char in bitString
         if not char == "0" or char == "1" then
             return exit("BitString contains other characters than 0 or 1. Only 0 or 1 digits are valid")
@@ -24,8 +24,8 @@ end function
 
 hexmap = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
 
-
-ToBitsInToBytes = function(numInDezimal,byteSize)
+//dec->bit
+DecToBinInBytes = function(numInDezimal,byteSize)
 result = []
 rest = numInDezimal
 while true
@@ -52,11 +52,12 @@ end while
 end if
 result.reverse
 result = result.join("")
-result = new BitsString.construct(result)
+result = new BitString.construct(result)
 return result
 end function
 
-Byte_NumToHex = function(BitNum,ByteNum)
+//bit->hex
+BinToHexInBytes = function(BitNum,ByteNum)
 BitNumInStr = str(BitNum)
 if BitNumInStr.len > ByteNum * 8 then
     return exit("the provided BitNum is too high. Expected was a size of:"+ByteNum+" you provided a Bitnum of"+BitNum / 8 +".")
@@ -74,7 +75,7 @@ while ByteNum*2 != i
 end while
 hexval = hexval.join("")
 hexval = "0x"+hexval+""
-hexval = new hexString.construct(hexval)
+hexval = new HexString.construct(hexval)
 return hexval
 end function
 
@@ -90,7 +91,7 @@ end function
 
 
 HexToNible_No_ZEROX = function(hexval)
-    hexval = str(ToBitsInToBytes(hexmap.indexOf(hexval),1).val)
+    hexval = str(DecToBinInBytes(hexmap.indexOf(hexval),1).val)
     hexval = hexval.split("")
     hexval = slice(hexval,4,8)
     hexval = str(hexval.join(""))
@@ -98,9 +99,9 @@ HexToNible_No_ZEROX = function(hexval)
     return nibleVal
 end function
 
-
+//hex->bit
 HexToBinInBytes = function(val,byteNum)
-    val = new hexString.construct(val)
+    val = new HexString.construct(val)
     val = val.val
     if val.len -2 != byteNum*2 then
         return exit("Your Hex-String is not the same lenght as your provided bytenum. The first two characters dont count")
@@ -110,12 +111,12 @@ HexToBinInBytes = function(val,byteNum)
     for char in val
         bitNum= bitNum+ ""+str(HexToNible_No_ZEROX(char))+""
     end for
-    return new BitsString.construct(bitNum)
+    return new BitString.construct(bitNum)
 end function
 
-
+//hex->dec
 HexToDec = function(val)
-    val = new hexString.construct(val).val
+    val = new HexString.construct(val).val
     val = slice(val,2,val.len)
     i = val.len
     dec = 0
@@ -124,4 +125,28 @@ HexToDec = function(val)
         i = i-1
     end for   
 return dec
+end function
+
+//bit->dec
+BitToDecInBytes = function(bitsString,ByteNum)
+if bitsString.len != ByteNum * 8 then
+    return exit("The provided bitsString is not the same lenght as your provided ByteNum(ByteNum will be times 8 here)")
+end if
+bitsString = BitString.construct(bitsString).val
+i = bitsString.len
+dec = 0
+for char in bitsString 
+    dec = dec + char.val * pow(2,i-1)
+    i = i-1
+end for
+    return dec
+end function
+//dec->hex
+DecToHexIn8Bytes = function(decimal)
+    if typeof(decimal) != "number" then
+        return exit("decimal provided is not of type number")
+    end if
+    bitval = DecToBinInBytes(decimal,8).val
+    result = BinToHexInBytes(bitval,8)
+    return result
 end function
