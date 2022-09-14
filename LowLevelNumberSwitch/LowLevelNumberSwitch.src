@@ -1,4 +1,4 @@
-import_code("../Mathlib/Mathlib":"../Mathlib/Mathlib")
+import_code("../Mathlib/Mathlib.src":"../Mathlib/Mathlib.src")
 HexString = {}
 HexString.construct = function(hexstring)
     if hexstring[0] != "0" then
