@@ -1,0 +1,8 @@
+ArrayBuffer = {}
+ArrayBuffer.construct = function(sizeinBites) 
+    buffer = []
+    for i in range(0,sizeinBites)  
+        buffer.push(0)
+    end for
+    self._buffer = buffer
+end function
