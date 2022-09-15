@@ -1,4 +1,4 @@
-import_code("../TestFramework/TestFramework.src":"../TestFramework/TestFramework.src")
+import_code("../../TestFramework/TestFramework.src":"../../TestFramework/TestFramework.src")
 import_code("./LowLevelNumberSwitch.src":"./LowLevelNumberSwitch.src")
 TestLowLevelNumberSwitch = new TestCase.construct("TestLowLevelNumberSwitch")
 hexstring= new HexString.construct("0x00")

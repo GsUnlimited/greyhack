@@ -1,4 +1,4 @@
-import_code("../TestFramework/TestFramework.src":"../TestFramework/TestFramework.src")
+import_code("../../TestFramework/TestFramework.src":"../../TestFramework/TestFramework.src")
 import_code("./Datatypes.src":"./Datatypes.src")
 TestDataTypes = TestCase.construct("TestDataTypes")
 // UInt8 functionality tests
