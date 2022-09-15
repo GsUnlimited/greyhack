@@ -1,4 +1,4 @@
-import_code("../TestFramework/TestFramework.src":"../TestFramework/TestFramework.src")
+import_code("../../TestFramework/TestFramework.src":"../../TestFramework/TestFramework.src")
 import_code("Mathlib.src":"Mathlib.src")
 TestMathlib = new TestCase.construct("TestMathlib")
 TestMathlib.assertSame(pow(2,1),2,"test that pow(2,1) is same as 2")
