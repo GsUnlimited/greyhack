@@ -1,0 +1,14 @@
+// use @ to refer an function to printOrExit (pls dont use anything else, cause message can only be string. everything else will result in an error(if the functio))
+typeCheckEqual = function(ToCheck,ToBe,printOrExit,message)
+    if typeof(message) != "string" then
+        exit("typeCheckEqual: message has to be of type string. Provided:"+typeof(message)+"")
+    end if
+    if typeof(ToCheck) == ToBe then
+        printOrExit(message)
+    end if
+end function
+
+checkIsString = function(ToCheck,printOrExit,message)
+    typeCheckEqual(ToCheck,"string",@printOrExit,message)
+end function
+
