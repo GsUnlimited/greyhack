@@ -6,3 +6,7 @@ ArrayBuffer.construct = function(sizeinBites)
     end for
     self._buffer = buffer
 end function
+
+ArrayBuffer.slice = function(startIndex, endIndex)
+    return slice(self._buffer, startIndex, endIndex)
+end function
