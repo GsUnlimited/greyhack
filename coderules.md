@@ -26,3 +26,11 @@ Classes and Objects:
 In General:
         Rule 4:
             Always follow DRY(dont repeat youself) and the clean code rules(rapidly found in the internet)
+ErrorMessages:
+    Rule 1:
+        If you need to throw an Error pls always reffer to the place it happends in your message.  e.g.:
+        A = {}
+        A.construct = function(param)
+            if param == 1 then
+                exit("A.construct: param has to be 1")
+        end function
