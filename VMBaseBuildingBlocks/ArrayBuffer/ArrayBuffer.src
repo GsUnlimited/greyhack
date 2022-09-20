@@ -1,12 +1,24 @@
+import_code("../../checkers/checkers.src":"../../checkers/checkers.src")
 ArrayBuffer = {}
 ArrayBuffer.construct = function(sizeinBites) 
+    typeCheckEqual(sizeinBites,"number",@exit,"ArrayBuffer.construct: sizeInBytes has to be of type number")
     buffer = []
-    for i in range(0,sizeinBites)  
+    for i in range(0,sizeinBites-1)  
         buffer.push(0)
     end for
     self._buffer = buffer
+    return self
 end function
 
 ArrayBuffer.slice = function(startIndex, endIndex)
+    typeCheckEqual(startIndex,"number",@exit,"ArrayBuffer.slice : startIndex has to be of type number")
+    typeCheckEqual(endIndex,"number",@exit,"ArrayBuffer.slice : endIndex has to be of type number")
+    if endIndex > self._buffer.len then
+        exit("ArrayBuffer.slice: endIndex is bigger than the ArrayBuffer._buffer. endIndex needs to be smaller because you cant access an out of range value in an array")
+    end if
     return slice(self._buffer, startIndex, endIndex)
+end function
+
+ArrayBuffer.getBuffer = function()
+    return self._buffer
 end function
