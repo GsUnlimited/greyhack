@@ -1,5 +1,148 @@
 import_code("../LowLevelNumberSwitch/LowLevelNumberSwitch.src":"../LowLevelNumberSwitch/LowLevelNumberSwitch.src")
-UIntEight = {}
+import_code("../../checkers/checkers.src":"../../checkers/checkers.src")
+import_code("../Mathlib/Mathlib.src":"../Mathlib/Mathlib.src")
+BaseNumericDataType = {}
+BaseNumericDataType.className = "BaseNumericDataType"
+BaseNumericDataType.construct = function()
+    self.decRules = {"NegativeAllowed":0,"Lowest":0,"Highest":0}
+    self.hexRules={"WithZeroX":0,"Size":0}
+    self.binaryRules={"Bytessize":0}
+    self._decVal = 0
+    self._hexVal = ""
+    self._binaryVal = []
+    return self
+end function
+BaseNumericDataType.configureRules = function(negativeAllowed,bytessize,withZeroX)
+    typeCheckEqual(negativeAllowed,"number",@exit,self.className+".configureRules: negativeAllowed has to be of type number. Provided was: "+typeof(negativeAllowed)+"")
+    typeCheckEqual(bytessize,"number",@exit,self.className+".configureRules: bytessize has to be of type number. Provided was: "+typeof(bytessize)+"")
+    typeCheckEqual(withZeroX,"number",@exit,self.className+".configureRules: withZeroX has to be of type number. Provided was: "+typeof(withZeroX)+"")
+    if negativeAllowed != 1 then
+        exit(self.className+".configureRules: negativeAllowed has to be either 0(false) or 1 (true). Provided was:"+negativeAllowed+"")
+    end if
+    if
+    if withZeroX != 1 then
+        exit(self.className+".configureRules: withZeroX has to be either 0(false) or 1 (true). Provided was: "+withZeroX+"")
+    end if
+    if withZeroX != 0 then
+        exit(self.className+".configureRules: withZeroX has to be either 0(false) or 1 (true). Provided was: "+withZeroX+"")
+    end if
+    if bytessize < 0 then
+        exit(self.className+".configureRules : bytessize has to be greater than 0. Provided was: "+bytessize+"")
+    end if
+    if bytessize > 8 then
+        exit(self.className+".configureRules : bytessize has to be smaller than 8. There are no bigger possible DataTypes. Provided was: "+bytessize+"")
+    end if
+    self.decRules["NegativeAllowed"] = negativeAllowed
+    self.binaryRules["Bytessize"] = bytessize
+    self.hexRules["WithZeroX"] = withZeroX
+    self._calculateRules()
+end function
+
+BaseNumericDataType._calculateRules = function()
+    self.hexRules.Size = self.binaryRules.Bytessize * 2
+    if self.decRules["NegativeAllowed"] == 0 then
+        self.decRules["Highest"] = pow(2,self.binaryRules.Bytessize) -1
+        self.decRules["Lowest"] = 0
+    else if self.decRules["NegativeAllowed"] == 1 then
+        self.decRules.Highest = pow(2,self.binaryRules["Bytessize"]-1) 
+        self.decRules.Lowest = pow(2,self.binaryRules["Bytessize"]-1) * -1
+    end if
+        exit(self.className+"._calculateRules: self.decRules.NegativeAllowed has to be either 0(false) or 1 (true). Provided was: "+self.decRules["NegativeAllowed"]+"")
+end function
+BaseNumericDataType._validateDecVal = function(decVal)
+    typeCheckEqual(decVal,"number",@exit,self.className+".setDecVal : decVal has to be of type number. Provided was :"+typeof(decVal)+".")
+    if self.decRules["NegativeAllowed"] == 0 then
+        self._checkNegativeDec(decVal)
+        self._checkLowest(decVal)
+        self._checkHighest(decVal)
+    else if self.decRules["NegativeAllowed"] == 1 then
+        self._checkLowest(decVal)
+        self._checkHighest(decVal)
+    else
+        exit(self.className+".setDecVal : "+self.className+".decRules.NegativeAllowed has to be 0 or 1. Provided was :"+self.decRules.NegativeAllowed+".")
+    end if
+end function
+
+BaseNumericDataType._checkNegativeDec = function(decVal)
+    if decVal < 0 then
+        exit(self.className+".checkNegativeDec: decVal has to be a postive. Provided was a value of: "+decVal+"")
+    end if
+end function
+
+BaseNumericDataType._checkLowest = function(decVal)
+    if decVal < self.decRules["Lowest"] then
+        exit(self.className+".checkLowest: decVal has to be a minimum of "+self.decRules["Lowest"]+". Provided was a value of: "+decVal+"")
+    end if
+end function
+BaseNumericDataType._checkHighest = function(decVal)
+    if decVal > self.decRules["Highest"] then
+        exit(self.className+".checkHighest: decVal has to a maximum of "+self.decRules["Highest"]+". Provided was a value of: "+decVal+"")
+    end if
+end function
+
+BaseNumericDataType._validateBinaryVal = function(binaryVal)
+    typeCheckEqual(binaryVal,"list",@exit,self.className+".validateBinaryVal: binaryVal has to be of type list. Provided was: "+typeof(binaryVal)+"")
+    self._checkSize(binaryVal.len,self.binaryRules["Bytessize"],self.className+".validateBinaryVal: binaryVal has to have a lenght of"+self.binaryRules["Bytessize"]+". Provided was:"+binaryVal.len+"")
+    for i in range(0,self.binaryRules["Bytessize"])
+        if binaryVal[i].len != 8 then
+            exit(self.className+".validateBinaryVal: binaryVal["+i+"] has to be 8 characters long. Provided was "+binaryVal[i].len+"")
+        end if
+    end for
+end function
+
+BaseNumericDataType._validateHexVal = function(hexVal)
+    typeCheckEqual(hexVal,"string",@exit,self.className+"._validateHexVal: hexVal has to be of type string. Provided was:"+typeof(hexVal)+"")
+    sizeBaseErrorMessage = self.className+"._validateHexVal: hexVal.len has to be equal to "+self.hexRules["Size"]+". Provided was: "
+    if self.hexRules["WithZeroX"] == 1 then
+        self._checkForZeroX(hexVal)
+        self._checkSize(hexVal-2,self.hexRules["Size"],sizeBaseErrorMessage+hexVal-2)
+    else if self.hexRules["WithZeroX"] == 0 then
+        self._checkSize(hexVal,self.hexRules["Size"],sizeBaseErrorMessage+hexVal)
+    end if
+end function
+
+BaseNumericDataType._checkForZeroX = function(hexVal)
+    hexVal = HexString.construct(hexVal).val
+    return
+end function
+BaseNumericDataType._checkSize = function(toCheck,ToBe,message)
+    checkStrictEqual(toCheck,ToBe,@exit,message)
+end function
+BaseNumericDataType.setDecVal = function(decVal)
+    self._validateDecVal(decVal)
+    self._decVal = decVal
+end function
+
+
+BaseNumericDataType.getDecVal = function()
+    return self._decVal 
+end function
+
+BaseNumericDataType.setBinaryVal = function(binaryVal)
+    self._validateBinaryVal(binaryVal)
+    self._binaryVal= binaryVal
+end function
+
+
+BaseNumericDataType.getBinaryVal = function()
+    return self._binaryVal 
+end function
+
+
+BaseNumericDataType.setHexVal = function(hexVal)
+    self._validateHexVal(hexVal)
+    self._hexVal = hexVal
+end function
+
+
+BaseNumericDataType.getHexVal = function()
+    return self._hexVal 
+end function
+
+
+
+
+UIntEight = new BaseNumericDataType.construct()
 UIntEight.construct = function(arrayWithOneByte)
     if typeof(arrayWithOneByte) != "list" then
         return exit("arrayWithOneByte has to be of type list. Provided was: "+typeof(arrayWithOneByte)+".")
@@ -163,7 +306,7 @@ IntThirtyTwo.construct = function(arrayBuffer)
 end function
 
 UIntSixtyFour = {}
-UIntTSixtyFour.construct = function(arrayBuffer)
+UIntSixtyFour.construct = function(arrayBuffer)
     if typeof(arrayBuffer) != "list" then
         return exit("UIntSixtyFour.construct: arrayBuffer has to be of type list. Provided was: "+typeof(arrayBuffer)+".")
     end if
