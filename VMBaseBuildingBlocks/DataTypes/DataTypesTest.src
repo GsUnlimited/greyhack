@@ -1,39 +1,12 @@
 import_code("../../TestFramework/TestFramework.src":"../../TestFramework/TestFramework.src")
 import_code("./Datatypes.src":"./Datatypes.src")
 TestDataTypes = new TestCase.construct("TestDataTypes")
-// UIntEight functionality tests
-uintEight_val = new UIntEight.construct(["00000111"])
-uintEight_valTwo = new UIntEight.construct(["10001010"])
-TestDataTypes.assertSame(uintEight_val.val,7,"test that UintEight correctly converts BitStrings to numbers(from 00000111 to 7)")
-TestDataTypes.assertSame(uintEight_valTwo.val,138,"test that UintEight correctly converts BitStrings to numbers(from 10001010 to 138)")
-TestDataTypes.assertNotSame(uintEight_val.val,8,"test that UintEight correctly converts BitStrings to numbers(from 00000111 not to 8)")
-TestDataTypes.assertNotSame(uintEight_val.val,"8","test that UintEight correctly converts BitStrings to numbers(from 00000111 not to 8 as String)")// Strings and number seem to be comparibale if they result in the same number. thats why we need 8 and not 7 here
-// IntEight functionality tests
-intEight_val = new IntEight.construct(["10000111"])
-intEight_valTwo = new IntEight.construct(["00001010"])
-TestDataTypes.assertSame(intEight_val.val,-7,"test that intEight correctly converts BitStrings to numbers(from 00000111 to 7)")
-TestDataTypes.assertSame(intEight_valTwo.val,10,"test that intEight correctly converts BitStrings to numbers(from 10001010 to 138)")
-TestDataTypes.assertNotSame(intEight_val.val,8,"test that intEight correctly converts BitStrings to numbers(from 00000111 not to 8)")
-TestDataTypes.assertNotSame(intEight_val.val,"-8","test that intEight correctly converts BitStrings to numbers(from 10000111 not to -8 as String)")// Strings and number seem to be comparibale if they result in the same number. thats why we need 8 and not 7 here
-//UIntSixTeen functionality tests
-uintSixTeen_var = new UIntSixTeen
-a = ["00000000","10001010"]
-b = ["10000000","00000111"]
-c = ["10000001","00000111"]
-uintSixTeen_var = uintSixTeen_var.construct(a)
-uintSixTeen_varTwo = new UIntSixTeen.construct(b)
-uintSixTeen_varThree = new UIntSixTeen.construct(c)
-TestDataTypes.assertSame(uintSixTeen_var.val,138,"test that UIntSixTeen converts BitStrings to numbers(from 0000000010000101 to 138)")
-TestDataTypes.assertSame(uintSixTeen_varTwo.val,32775,"test that UIntSixTeen converts BitStrings to numbers(from 1000000000000111 to 32775")
-TestDataTypes.assertSame(uintSixTeen_varThree.val,33031,"test that UIntSixTeen converts BitStrings to numbers(from 1000000010000111 to 33031")
-// IntSixTeen functionality test
-intSixTeen_var = new IntSixTeen.construct(a)
-intSixTeen_varTwo = new IntSixTeen.construct(b)
-intSixTeen_varThree = new IntSixTeen.construct(c)
-TestDataTypes.assertSame(intSixTeen_var.val,138,"test that UIntSixTeen converts BitStrings to numbers(from 0000000010000101 to 138)")
-TestDataTypes.assertSame(intSixTeen_varTwo.val,-7,"test that IntSixTeen converts BitStrings to numbers(from 1000000000000111 to -7)")
-TestDataTypes.assertSame(intSixTeen_varThree.val,-263,"test that IntSixTeen converts BitStrings to numbers(from 1000000100000111 to -263)")
-//rest is implemented same so: TODO Test the rest from 32 and 64
+testVal = new BaseNumericDataType.construct()
+testVal.configureRules(0,1,1)
+testVal.setDecVal(7)
+testVal.setBinaryVal(["00000111"])
+testVal.setHexVal("0x0007")
+TestDataTypes.assertSame(testVal.getDecVal(),34,"test that BaseNumericDataType.setDecVal(34) saves the value properly and returns it properly with .getDecVal")
 
 
 
