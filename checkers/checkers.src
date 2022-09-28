@@ -1,4 +1,4 @@
-// use @ to refer a function to printOrExit (pls dont use anything else, cause message can only be string. everything else will result in an error(if the functio))
+// use @ to refer a function to printOrExit (pls dont use anything else, cause message can only be string. everything else will result in an error)
 typeCheckEqual = function(ToCheck,ToBe,printOrExit,message)
     if typeof(message) != "string" then
         exit("typeCheckEqual: message has to be of type string. Provided:"+typeof(message)+"")
@@ -15,9 +15,9 @@ end function
 checkStrictEqual = function(ToCheck,ToBe,printOrExit,message)
     if typeof(ToCheck) == typeof(ToBe) then
         if ToCheck != ToBe then
-            printOrExit("checkStrictEqual: a of type: "+typeof(ToCheck)+",with value: "+ToCheck+" is not the same as b with type: "+typeof(ToBe)+",with value: "+ToBe+".")
+            printOrExit(message)
         end if
     else 
-        printOrExit("checkStrictEqual: a of type: "+typeof(ToCheck)+",with value: "+ToCheck+" is not the same as b with type: "+typeof(ToBe)+",with value: "+ToBe+".")
+        printOrExit(message)
     end if
 end function
