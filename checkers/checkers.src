@@ -15,9 +15,9 @@ end function
 checkStrictEqual = function(ToCheck,ToBe,printOrExit,message)
     if typeof(ToCheck) == typeof(ToBe) then
         if ToCheck != ToBe then
-            printOrExit("checkStrictEqual: a of type: "+typeof(ToCheck)+",with value: "+ToCheck+" is not the same as b with type: "+typeof(ToBe)+",with value: "+ToBe+".")
+            printOrExit(message)
         end if
     else 
-        printOrExit("checkStrictEqual: a of type: "+typeof(ToCheck)+",with value: "+ToCheck+" is not the same as b with type: "+typeof(ToBe)+",with value: "+ToBe+".")
+        printOrExit(message)
     end if
 end function
