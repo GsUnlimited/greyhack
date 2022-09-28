@@ -16,14 +16,10 @@ BaseNumericDataType.configureRules = function(negativeAllowed,bytessize,withZero
     typeCheckEqual(negativeAllowed,"number",@exit,self.className+".configureRules: negativeAllowed has to be of type number. Provided was: "+typeof(negativeAllowed)+"")
     typeCheckEqual(bytessize,"number",@exit,self.className+".configureRules: bytessize has to be of type number. Provided was: "+typeof(bytessize)+"")
     typeCheckEqual(withZeroX,"number",@exit,self.className+".configureRules: withZeroX has to be of type number. Provided was: "+typeof(withZeroX)+"")
-    if negativeAllowed != 1 then
+    if negativeAllowed < 0 or negativeAllowed > 1 then
         exit(self.className+".configureRules: negativeAllowed has to be either 0(false) or 1 (true). Provided was:"+negativeAllowed+"")
     end if
-    if
-    if withZeroX != 1 then
-        exit(self.className+".configureRules: withZeroX has to be either 0(false) or 1 (true). Provided was: "+withZeroX+"")
-    end if
-    if withZeroX != 0 then
+    if withZeroX < 0 or withZeroX > 1 then
         exit(self.className+".configureRules: withZeroX has to be either 0(false) or 1 (true). Provided was: "+withZeroX+"")
     end if
     if bytessize < 0 then
@@ -41,11 +37,13 @@ end function
 BaseNumericDataType._calculateRules = function()
     self.hexRules.Size = self.binaryRules.Bytessize * 2
     if self.decRules["NegativeAllowed"] == 0 then
-        self.decRules["Highest"] = pow(2,self.binaryRules.Bytessize) -1
+        self.decRules["Highest"] = pow(2,self.binaryRules.Bytessize*8) -1
         self.decRules["Lowest"] = 0
+        return
     else if self.decRules["NegativeAllowed"] == 1 then
-        self.decRules.Highest = pow(2,self.binaryRules["Bytessize"]-1) 
-        self.decRules.Lowest = pow(2,self.binaryRules["Bytessize"]-1) * -1
+        self.decRules.Highest = pow(2,self.binaryRules["Bytessize"]*8-1) 
+        self.decRules.Lowest = pow(2,self.binaryRules["Bytessize"]*8) * -1
+        return
     end if
         exit(self.className+"._calculateRules: self.decRules.NegativeAllowed has to be either 0(false) or 1 (true). Provided was: "+self.decRules["NegativeAllowed"]+"")
 end function
@@ -83,7 +81,7 @@ end function
 BaseNumericDataType._validateBinaryVal = function(binaryVal)
     typeCheckEqual(binaryVal,"list",@exit,self.className+".validateBinaryVal: binaryVal has to be of type list. Provided was: "+typeof(binaryVal)+"")
     self._checkSize(binaryVal.len,self.binaryRules["Bytessize"],self.className+".validateBinaryVal: binaryVal has to have a lenght of"+self.binaryRules["Bytessize"]+". Provided was:"+binaryVal.len+"")
-    for i in range(0,self.binaryRules["Bytessize"])
+    for i in range(0,self.binaryRules["Bytessize"]-1)
         if binaryVal[i].len != 8 then
             exit(self.className+".validateBinaryVal: binaryVal["+i+"] has to be 8 characters long. Provided was "+binaryVal[i].len+"")
         end if
@@ -95,9 +93,9 @@ BaseNumericDataType._validateHexVal = function(hexVal)
     sizeBaseErrorMessage = self.className+"._validateHexVal: hexVal.len has to be equal to "+self.hexRules["Size"]+". Provided was: "
     if self.hexRules["WithZeroX"] == 1 then
         self._checkForZeroX(hexVal)
-        self._checkSize(hexVal-2,self.hexRules["Size"],sizeBaseErrorMessage+hexVal-2)
+        self._checkSize(hexVal.len-2,self.hexRules["Size"],sizeBaseErrorMessage+hexVal.len-2," ")
     else if self.hexRules["WithZeroX"] == 0 then
-        self._checkSize(hexVal,self.hexRules["Size"],sizeBaseErrorMessage+hexVal)
+        self._checkSize(hexVal,self.hexRules["Size"],sizeBaseErrorMessage+hexVal," ")
     end if
 end function
 
@@ -138,8 +136,50 @@ end function
 BaseNumericDataType.getHexVal = function()
     return self._hexVal 
 end function
+BaseNumericDataType._provideFullBinaryString = function()
+    binaryVal = self.getBinaryVal()
+    FullBinVal = ""
+    for binVal in binaryVal
+        FullBinVal + binVal
+    end for
+    return FullBinVal
+end function
+BaseNumericDataType.computeDecValFromBinaryVal = function()
+    FullBinVal = self._provideFullBinaryString()
+    if self.decRules["NegativAllowed"] == 0 then
+        deVal = BitToDecInBytes(FullBinVal,)
+        self.setDecVal(deVal)
+    else
+        prefix = FullBinVal[0]
+        binVal = slice(FullBinVal,1,self.binaryRules["Bytessize"]*8-1)
+        binVal = "0" + binVal
+        decValWOPrefix = BitToDecInBytes(binVal)
+        if decValWOPrefix
 
+end function
 
+BaseNumericDataType.computeBinaryValFromDecVal = function()
+    decVal = str(self.getDecVal())
+    if slice(decVal,1,decVal.len-1) != "-" then
+
+    end if
+end function
+
+    
+BaseNumericDataType.computeHexValFromBinaryVal = function()
+    binaryVal = self.getBinaryVal()
+    FullBinVal = self._provideFullBinaryString()
+    hexVal = BinToHexInBytes(FullBinVal,self.binaryRules["Bitessize"])
+    if self.hexRules["WithZeroX"] == 0 then
+        hexVal = slice(hexVal,2,self.hexRules["Size"])
+    end if
+    self.setHexVal(hexVal)
+end function
+
+BaseNumericDataType.computeBinaryValFromHexVal = function()
+    hexVal = self.getHexVal
+
+end function
 
 
 UIntEight = new BaseNumericDataType.construct()
