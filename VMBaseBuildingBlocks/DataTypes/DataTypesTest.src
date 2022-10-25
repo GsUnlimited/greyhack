@@ -2,15 +2,13 @@ import_code("../../TestFramework/TestFramework.src":"../../TestFramework/TestFra
 import_code("./Datatypes.src":"./Datatypes.src")
 TestDataTypes = new TestCase.construct("TestDataTypes")
 testVal = new BaseNumericDataType.construct()
-testVal.configureRules(1,2,1)
+testVal.configureRules(0,1,1)
 //print(testVal)
-//testVal.setDecVal(7)
-binArray = testVal._binaryStringToBinaryArray("1000000001010101")
-TestDataTypes.assertSame(binArray,["10000000","01010101"],"Test equality")
-testVal.setBinaryVal(["10000000","00000000"])
-print(testVal.getBinaryVal())
-//testVal.setHexVal("0x07")
-testVal.computeDecValFromBinaryVal()
-testVal.computeHexValFromBinaryVal()
-print(testVal.getDecVal())
-TestDataTypes.assertSame(testVal.getDecVal(),-65536,"test that BaseNumericDataType evaluates the right number if an binaryValue is given(here -65536)")
+testVal.setDecVal(7)
+testVal.setBinaryVal(["00000111"])
+testVal.setHexVal("0x07")
+TestDataTypes.assertSame(testVal.getDecVal(),7,"test that BaseNumericDataType.setDecVal(7) saves the value properly and returns it properly with .getDecVal")
+
+
+
+
