@@ -86,6 +86,7 @@ BaseNumericDataType._validateBinaryVal = function(binaryVal)
             exit(self.className+".validateBinaryVal: binaryVal["+i+"] has to be 8 characters long. Provided was "+binaryVal[i].len+"")
         end if
     end for
+    return
 end function
 
 BaseNumericDataType._validateHexVal = function(hexVal)
@@ -97,6 +98,7 @@ BaseNumericDataType._validateHexVal = function(hexVal)
     else if self.hexRules["WithZeroX"] == 0 then
         self._checkSize(hexVal,self.hexRules["Size"],sizeBaseErrorMessage+hexVal," ")
     end if
+    return
 end function
 
 BaseNumericDataType._checkForZeroX = function(hexVal)
@@ -105,10 +107,12 @@ BaseNumericDataType._checkForZeroX = function(hexVal)
 end function
 BaseNumericDataType._checkSize = function(toCheck,ToBe,message)
     checkStrictEqual(toCheck,ToBe,@exit,message)
+    return
 end function
 BaseNumericDataType.setDecVal = function(decVal)
     self._validateDecVal(decVal)
     self._decVal = decVal
+    return
 end function
 
 
@@ -119,6 +123,7 @@ end function
 BaseNumericDataType.setBinaryVal = function(binaryVal)
     self._validateBinaryVal(binaryVal)
     self._binaryVal= binaryVal
+    return
 end function
 
 
@@ -130,6 +135,7 @@ end function
 BaseNumericDataType.setHexVal = function(hexVal)
     self._validateHexVal(hexVal)
     self._hexVal = hexVal
+    return
 end function
 
 
@@ -156,8 +162,12 @@ BaseNumericDataType.computeDecValFromBinaryVal = function()
             binVal = "0" + binVal
             decValWOPrefix = BitToDecInBytes(binVal,self.binaryRules["Bytessize"])
             if decValWOPrefix == 0 then
-                self.setDecVal(pow(2,FullBinVal.len) * -1)
+                self.setDecVal(pow(2,FullBinVal.len-1) * -1)
             end if
+        else
+            binVal = FullBinVal
+            decValWOPrefix = BitToDecInBytes(binVal,self.binaryRules["Bytessize"])
+            self.setDecVal(decValWOPrefix)
         end if
     end if
 end function
@@ -165,24 +175,34 @@ end function
 BaseNumericDataType._binaryStringToBinaryArray = function(binaryString)
     binaryVal = []
     for i in range(0,(self.binaryRules["Bytessize"]-1))
-        binaryVal.push(slice(binaryString,i*8,(i+1)*8-1))
+        binaryVal.push(slice(binaryString,i*8,(i+1)*8))
     end for
     return binaryVal
 end function
 BaseNumericDataType.computeBinaryValFromDecVal = function()
     decVal = str(self.getDecVal())
-    if slice(decVal,0,0) != "-" then
+    firstPlace = slice(decVal,0,1)
+    if  firstPlace != "-" then
         binVal = DecToBinInBytes(decVal.val,self.binaryRules["Bytessize"])
-        binVal = self._binaryStringToBinaryArray(binVal)
+        binVal = self._binaryStringToBinaryArray(binVal.val)
         self.setBinaryVal(binVal)
-    else
-        decVal = slice(decVal,1,decVal.len)
-        binVal = DecToBinInBytes(decVal,self.binaryRules["Bytessize"])
-        binVal = self._binaryStringToBinaryArray(binVal)
-        switch = binVal[0]
-        switch = "1"+slice(switch,1,7)
-        self.setBinaryVal(binVal)
+        return
     end if
+    decVal = slice(decVal,1,decVal.len)
+    if decVal == pow(2,self.binaryRules["Bytessize"]-1) then
+        binVal = []
+        for i in range(0,self.binaryRules["Bytessize"])
+            binVal.push("11111111")
+        end for
+        return binVal
+    end if
+    binVal = DecToBinInBytes(decVal.val,self.binaryRules["Bytessize"])
+    binVal = self._binaryStringToBinaryArray(binVal.val)
+    switch = binVal[0]
+    switch = "1"+slice(switch,1,8)
+    binVal[0] = switch
+    self.setBinaryVal(binVal)
+    return
 end function
 
     
@@ -197,253 +217,39 @@ BaseNumericDataType.computeHexValFromBinaryVal = function()
 end function
 
 BaseNumericDataType.computeBinaryValFromHexVal = function()
-    hexVal = self.getHexVal
+    hexVal = self.getHexVal()
+    if self.hexRules["WithZeroX"] == 0 then
+        hexVal = slice(hexVal,2,self.binaryRules["Bytessize"]*4)
+        binVal = BinToHexInBytes(hexVal)
+        self.setBinaryVal(binVal)
+    else
+        binVal = BinToHexInBytes(hexVal)
+        self.setBinaryVal(binVal)
+    end if
 end function
 
 
 UIntEight = new BaseNumericDataType.construct()
-UIntEight.construct = function(arrayWithOneByte)
-    if typeof(arrayWithOneByte) != "list" then
-        return exit("arrayWithOneByte has to be of type list. Provided was: "+typeof(arrayWithOneByte)+".")
-    end if
-    if arrayWithOneByte.len != 1 then
-        return exit("The provided array has to have a lenght of 1. Your had a length of: "+arrayWithOneByte.len+".")
-    end if
-    bitString = BitString.construct(arrayWithOneByte[0]).val
-    if bitString.len != 8 then
-        return exit("The provided lenght of the value in arrayWithOneByte[0] has to be 8. Yours had a lenght of"+bitString.len+"")
-    end if
-    dec = BitToDecInBytes(bitString,1)
-    self.val = dec
-    return self
-end function
+UIntEight.configureRules(0,1,1)
 
-IntEight = {}
-IntEight.construct = function(arrayWithOneByte)
-    if typeof(arrayWithOneByte) != "list" then
-        return exit("arrayWithOneByte has to be of type list. Provided was: "+typeof(arrayWithOneByte)+".")
-    end if
-    if arrayWithOneByte.len != 1 then
-        return exit("The provided array has to have a lenght of 1. Your had a length of: "+arrayWithOneByte.len+".")
-    end if
-    binaryString = BitString.construct(arrayWithOneByte[0]).val
-    if binaryString.len != 8 then
-        return exit("The provided lenght of the value in arrayWithOneByte[0] has to be 8. Yours had a lenght of"+binaryString.len+"")
-    end if 
-    prefix = binaryString[0]
-    binaryString = slice(binaryString,1,8)
-    binaryString = "0" + binaryString
-    decimalWithoutPrefix = BitToDecInBytes(binaryString,1)
-    if prefix == "0" then
-        self.val = decimalWithoutPrefix * 1
-    else
-        if prefix == "1" then
-        self.val =  decimalWithoutPrefix * -1
-        end if
-    end if
-    return self
-end function
+IntEight = new BaseNumericDataType.construct()
+IntEight.configureRules(1,1,1)
 
-UIntSixTeen = {}
-UIntSixTeen.construct = function(arrayBuffer)
-    if typeof(arrayBuffer) != "list" then
-        return exit("UIntSixTeen.construct: arrayBuffer has to be of type list. Provided was: "+typeof(arrayBuffer)+".")
-    end if
-    if arrayBuffer.len != 2 then
-        return exit("UIntSixTeen.construct: arrayBuffer has to have a lenght of 2. Your had a length of: "+arrayBuffer.len+".")
-    end if
-    FirstBitString = BitString.construct(arrayBuffer[0]).val
-    if FirstBitString.len != 8 then
-        return exit("UIntSixTeen.construct: lenght of arrayBuffer[0] has to be 8. provided was a lenght of"+FirstBitString.len+"")
-    end if
-    SecondBitString = BitString.construct(arrayBuffer[1]).val
-    if SecondBitString.len != 8 then
-        return exit("UIntSixTeen.construct: lenght of arrayBuffer[1] has to be 8. provided was a lenght of"+SecondBitString.len+"")
-    end if
-    bitString = BitString.construct(FirstBitString+SecondBitString).val
-    dec = BitToDecInBytes(bitString,2)
-    self.val = dec
-    return self
-end function
+UIntSixTeen = new BaseNumericDataType.construct()
+UIntSixTeen.configureRules(0,2,1)
 
-IntSixTeen = {}
-IntSixTeen.construct = function(arrayBuffer)
-    if typeof(arrayBuffer) != "list" then
-        return exit("IntSixTeen.construct: arrayBuffer has to be of type list. Provided was: "+typeof(arrayBuffer)+".")
-    end if
-    if arrayBuffer.len != 2 then
-        return exit("IntSixTeen.construct: arrayBuffer has to have a lenght of 2. Your had a length of: "+arrayBuffer.len+".")
-    end if
-    FirstBitString = BitString.construct(arrayBuffer[0]).val
-    if FirstBitString.len != 8 then
-        return exit("IntSixTeen.construct: lenght of arrayBuffer[0] has to be 8. provided was a lenght of"+FirstBitString.len+"")
-    end if
-    SecondBitString = BitString.construct(arrayBuffer[1]).val
-    if SecondBitString.len != 8 then
-        return exit("IntSixTeen.construct: lenght of arrayBuffer[1] has to be 8. provided was a lenght of"+SecondBitString.len+"")
-    end if
-    prefix = FirstBitString[0]
-    FirstBitString = slice(FirstBitString,1,8)  
-    binaryString = "0" + FirstBitString + SecondBitString
-    decimalWithoutPrefix = BitToDecInBytes(binaryString,2)
-    if prefix == "0" then
-        self.val = decimalWithoutPrefix * 1
-    else
-        if prefix == "1" then
-        self.val =  decimalWithoutPrefix * -1
-        end if
-    end if
-    return self
-end function
+IntSixTeen = new BaseNumericDataType.construct()
+IntSixTeen.configureRules(1,2,1)
 
-UIntThirtyTwo = {}
-UIntThirtyTwo.construct = function(arrayBuffer)
-    if typeof(arrayBuffer) != "list" then
-        return exit("UIntThirtyTwo.construct: arrayBuffer has to be of type list. Provided was: "+typeof(arrayBuffer)+".")
-    end if
-    if arrayBuffer.len != 2 then
-        return exit("UIntThirtyTwo.construct: arrayBuffer has to have a lenght of 2. Your had a length of: "+arrayBuffer.len+".")
-    end if
-    FirstBitString = BitString.construct(arrayBuffer[0]).val
-    if FirstBitString.len != 8 then
-        return exit("UIntThirtyTwo.construct: lenght of arrayBuffer[0] has to be 8. provided was a lenght of"+FirstBitString.len+"")
-    end if
-    SecondBitString = BitString.construct(arrayBuffer[1]).val
-    if SecondBitString.len != 8 then
-        return exit("UIntThirtyTwo.construct: lenght of arrayBuffer[1] has to be 8. provided was a lenght of"+SecondBitString.len+"")
-    end if
-    ThirdBitString = BitString.construct(arrayBuffer[2]).val
-    if ThirdBitString.len != 8 then
-        return exit("UIntThirtyTwo.construct: lenght of arrayBuffer[2] has to be 8. provided was a lenght of"+ThirdBitString.len+"")
-    end if
-    FourthBitString = BitString.construct(arrayBuffer[3]).val
-    if FourthBitString.len != 8 then
-        return exit("UIntThirtyTwo.construct: lenght of arrayBuffer[3] has to be 8. provided was a lenght of"+FourthBitString.len+"")
-    end if
-    bitString = BitString.construct(FirstBitString+SecondBitString+ThirdBitString+FourthBitString).val
-    dec = BitToDecInBytes(bitString,4)
-    self.val = dec
-    return self
-end function
 
-IntThirtyTwo = {}
-IntThirtyTwo.construct = function(arrayBuffer)
-    if typeof(arrayBuffer) != "list" then
-        return exit("IntThirtyTwo.construct: arrayBuffer has to be of type list. Provided was: "+typeof(arrayBuffer)+".")
-    end if
-    if arrayBuffer.len != 2 then
-        return exit("IntThirtyTwo.construct: arrayBuffer has to have a lenght of 2. Your had a length of: "+arrayBuffer.len+".")
-    end if
-    FirstBitString = BitString.construct(arrayBuffer[0]).val
-    if FirstBitString.len != 8 then
-        return exit("IntThirtyTwo.construct: lenght of arrayBuffer[0] has to be 8. provided was a lenght of"+FirstBitString.len+"")
-    end if
-    SecondBitString = BitString.construct(arrayBuffer[1]).val
-    if SecondBitString.len != 8 then
-        return exit("IntThirtyTwo.construct: lenght of arrayBuffer[1] has to be 8. provided was a lenght of"+SecondBitString.len+"")
-    end if
-    ThirdBitString = BitString.construct(arrayBuffer[2]).val
-    if ThirdBitString.len != 8 then
-        return exit("IntThirtyTwo.construct: lenght of arrayBuffer[2] has to be 8. provided was a lenght of"+ThirdBitString.len+"")
-    end if
-    FourthBitString = BitString.construct(arrayBuffer[3]).val
-    if FourthBitString.len != 8 then
-        return exit("IntThirtyTwo.construct: lenght of arrayBuffer[3] has to be 8. provided was a lenght of"+FourthBitString.len+"")
-    end if
-    prefix = FirstBitString[0]
-    FirstBitString = slice(FirstBitString,1,8)  
-    binaryString = "0" + FirstBitString + SecondBitString+ ThirdBitString + FourthBitString
-    decimalWithoutPrefix = BitToDecInBytes(binaryString,2)
-    if prefix == "0" then
-        self.val = decimalWithoutPrefix * 1
-    else
-        if prefix == "1" then
-        self.val =  decimalWithoutPrefix * -1
-        end if
-    end if
-    return self
-end function
+UIntThirtyTwo = new BaseNumericDataType.construct()
+UIntThirtyTwo.configureRules(0,4,1)
 
-UIntSixtyFour = {}
-UIntSixtyFour.construct = function(arrayBuffer)
-    if typeof(arrayBuffer) != "list" then
-        return exit("UIntSixtyFour.construct: arrayBuffer has to be of type list. Provided was: "+typeof(arrayBuffer)+".")
-    end if
-    if arrayBuffer.len != 2 then
-        return exit("UIntSixtyFour.construct: arrayBuffer has to have a lenght of 2. Your had a length of: "+arrayBuffer.len+".")
-    end if
-    FirstBitString = BitString.construct(arrayBuffer[0]).val
-    if FirstBitString.len != 8 then
-        return exit("UIntSixtyFour.construct: lenght of arrayBuffer[0] has to be 8. provided was a lenght of"+FirstBitString.len+"")
-    end if
-    SecondBitString = BitString.construct(arrayBuffer[1]).val
-    if SecondBitString.len != 8 then
-        return exit("UIntSixtyFour.construct: lenght of arrayBuffer[1] has to be 8. provided was a lenght of"+SecondBitString.len+"")
-    end if
-    ThirdBitString = BitString.construct(arrayBuffer[2]).val
-    if ThirdBitString.len != 8 then
-        return exit("UIntSixtyFour.construct: lenght of arrayBuffer[2] has to be 8. provided was a lenght of"+ThirdBitString.len+"")
-    end if
-    FourthBitString = BitString.construct(arrayBuffer[3]).val
-    if FourthBitString.len != 8 then
-        return exit("UIntSixtyFour.construct: lenght of arrayBuffer[3] has to be 8. provided was a lenght of"+FourthBitString.len+"")
-    end if
-    bitString = BitString.construct(FirstBitString+SecondBitString+ThirdBitString+FourthBitString).val
-    dec = BitToDecInBytes(bitString,4)
-    self.val = dec
-    return self
-end function
+IntThirtyTwo = new BaseNumericDataType.construct()
+IntThirtyTwo.configureRules(1,4,1)
 
-IntSixtyFour = {}
-IntSixtyFour.construct = function(arrayBuffer)
-    if typeof(arrayBuffer) != "list" then
-        return exit("IntSixtyFour.construct: arrayBuffer has to be of type list. Provided was: "+typeof(arrayBuffer)+".")
-    end if
-    if arrayBuffer.len != 2 then
-        return exit("IntSixtyFour.construct: arrayBuffer has to have a lenght of 2. Your had a length of: "+arrayBuffer.len+".")
-    end if
-    FirstBitString = BitString.construct(arrayBuffer[0]).val
-    if FirstBitString.len != 8 then
-        return exit("IntSixtyFour.construct: lenght of arrayBuffer[0] has to be 8. provided was a lenght of"+FirstBitString.len+"")
-    end if
-    SecondBitString = BitString.construct(arrayBuffer[1]).val
-    if SecondBitString.len != 8 then
-        return exit("IntSixtyFour.construct: lenght of arrayBuffer[1] has to be 8. provided was a lenght of"+SecondBitString.len+"")
-    end if
-    ThirdBitString = BitString.construct(arrayBuffer[2]).val
-    if ThirdBitString.len != 8 then
-        return exit("IntSixtyFour.construct: lenght of arrayBuffer[2] has to be 8. provided was a lenght of"+ThirdBitString.len+"")
-    end if
-    FourthBitString = BitString.construct(arrayBuffer[3]).val
-    if FourthBitString.len != 8 then
-        return exit("IntSixtyFour.construct: lenght of arrayBuffer[3] has to be 8. provided was a lenght of"+FourthBitString.len+"")
-    end if
-    FifthBitString = BitString.construct(arrayBuffer[3]).val
-    if FifthBitString.len != 8 then
-        return exit("IntSixtyFour.construct: lenght of arrayBuffer[3] has to be 8. provided was a lenght of"+FifthBitString.len+"")
-    end if
-    SixtBitString = BitString.construct(arrayBuffer[3]).val
-    if SixtBitString.len != 8 then
-        return exit("IntSixtyFour.construct: lenght of arrayBuffer[3] has to be 8. provided was a lenght of"+SixtBitString.len+"")
-    end if
-    SeventhBitString = BitString.construct(arrayBuffer[3]).val
-    if SeventhBitString.len != 8 then
-        return exit("IntSixtyFour.construct: lenght of arrayBuffer[3] has to be 8. provided was a lenght of"+SeventhBitString.len+"")
-    end if
-    EigthBitString = BitString.construct(arrayBuffer[3]).val
-    if EigthBitString.len != 8 then
-        return exit("IntSixtyFour.construct: lenght of arrayBuffer[3] has to be 8. provided was a lenght of"+EigthBitString.len+"")
-    end if
-    prefix = FirstBitString[0]
-    FirstBitString = slice(FirstBitString,1,8)  
-    binaryString = "0" + FirstBitString + SecondBitString+ ThirdBitString + FourthBitString + FifthBitString + SixtBitString + SeventhBitString + EigthBitString
-    decimalWithoutPrefix = BitToDecInBytes(binaryString,2)
-    if prefix == "0" then
-        self.val = decimalWithoutPrefix * 1
-    else
-        if prefix == "1" then
-        self.val =  decimalWithoutPrefix * -1
-        end if
-    end if
-    return self
-end function
+UIntSixtyFour = new BaseNumericDataType.construct()
+UIntSixtyFour.configureRules(0,8,1)
+
+IntSixtyFour = new BaseNumericDataType.construct()
+IntSixtyFour.configureRules(1,8,1)
