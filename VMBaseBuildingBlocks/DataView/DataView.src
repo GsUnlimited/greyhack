@@ -1,0 +1,106 @@
+import_code("../ArrayBuffer/ArrayBuffer.src":"../ArrayBuffer/ArrayBuffer.src")
+import_code("../DataTypes/DataTypes.src":"../DataTypes/DataTypes.src")
+import_code("../../checkers/checkers.src":"../../checkers/checkers.src")
+
+
+DataView = {}
+DataView.className = "DataView"
+DataView.construct = function(arrayBuffer)
+    self._buffer = arrayBuffer
+    return self
+end function
+
+DataView.getNestedBuffer = function()
+    return self._buffer.getBuffer()
+end function
+
+DataView.getBuffer = function()
+    return self._buffer
+end function
+
+DataView._getDataType = function(locationIndex,byteSize,dataType)
+    print(dataType)
+    typeCheckEqual(locationIndex,typeof(1),@exit,self.className+"DataView.getDataType : locationIndex has to be of type "+typeof(1)+". Provided was: "+typeof(locationIndex)+".")
+    typeCheckEqual(byteSize,typeof(1),@exit,self.className+".getDataType : byteSize has to be of type "+typeof(1)+". Provided was: "+typeof(byteSize)+".")
+    dataFormat = new dataType
+    print(dataFormat)
+    data = slice(self.getNestedBuffer(),locationIndex,locationIndex+byteSize)
+    print(data)
+    dataFormat.setBinaryVal(data)
+    print(dataFormat)
+    dataFormat.computeHexValFromBinaryVal()
+    dataFormat.computeDecValFromBinaryVal()
+    print(dataFormat)
+    return dataFormat
+end function
+
+DataView._setDataType = function(locationIndex, byteSize, dataTypeObject)
+    print(dataTypeObject)
+    for i in range(0,byteSize)
+        print(i)
+        print(locationIndex+i)
+        self.getNestedBuffer()[locationIndex+i] = dataTypeObject.getBinaryVal()[i]
+        if i == byteSize-1 then
+            break
+        end if
+    end for
+end function
+
+DataView.getUIntEight = function(locationIndex)
+    return self._getDataType(locationIndex,1,UIntEight)
+end function
+
+DataView.setUIntEight = function(locationIndex,valObject)
+    checkStrictEqual(valObject.className, "UIntEight",@exit,self.className+".setUIntEight: valObject has to be of type UIntEight")
+    self._setDataType(locationIndex,1,valObject)
+end function
+
+DataView.getIntEight = function(locationIndex)
+    return self._getDataType(locationIndex,1,IntEight)
+end function
+
+DataView.setIntEight = function(locationIndex,valObject)
+    self._setDataType(locationIndex,1,valObject)
+end function
+
+DataTypeWrapperBin = function(type,binVal)
+    data = new type
+    data.setBinaryVal(binVal)
+    data.computeDecValFromBinaryVal()
+    data.computeHexValFromBinaryVal()
+    return data
+end function
+
+DataTypeWrapperDec = function(type,decVal)
+    data = new type
+    data.setDecVal(decVal)
+    data.computeBinaryValFromDecVal()
+    data.computeHexValFromBinaryVal()
+    return data
+end function
+
+DataTypeWrapperHex = function(type,hexVal)
+    data = new type
+    data.setHexVal(hexVal)
+    data.computeBinaryValFromHexVal()
+    data.computeDecValFromBinaryVal()
+    return data
+end function
+
+
+arrBuff = new ArrayBuffer.construct(256)
+print(arrBuff)
+arrBuff._buffer[0] = "00001111"
+print(arrBuff)
+dv = new DataView.construct(arrBuff)
+print(dv)
+val = dv.getUIntEight(0)
+print(val)
+uIntEight = DataTypeWrapperBin(UIntEight,["11111111"])
+dv.setUIntEight(1,uIntEight)
+print(dv)
+
+
+
+
+
