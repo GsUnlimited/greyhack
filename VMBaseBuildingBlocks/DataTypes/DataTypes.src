@@ -140,28 +140,48 @@ BaseNumericDataType._provideFullBinaryString = function()
     binaryVal = self.getBinaryVal()
     FullBinVal = ""
     for binVal in binaryVal
-        FullBinVal + binVal
+        FullBinVal = FullBinVal + binVal
     end for
     return FullBinVal
 end function
 BaseNumericDataType.computeDecValFromBinaryVal = function()
-    FullBinVal = self._provideFullBinaryString()
-    if self.decRules["NegativAllowed"] == 0 then
-        deVal = BitToDecInBytes(FullBinVal,)
+    FullBinVal = self._provideFullBinaryString
+    if self.decRules["NegativeAllowed"] == 0 then
+        deVal = BitToDecInBytes(FullBinVal,self.binaryRules["Bytessize"])
         self.setDecVal(deVal)
     else
         prefix = FullBinVal[0]
-        binVal = slice(FullBinVal,1,self.binaryRules["Bytessize"]*8-1)
-        binVal = "0" + binVal
-        decValWOPrefix = BitToDecInBytes(binVal)
-        if decValWOPrefix
-
+        if prefix == "1" then
+            binVal = slice(FullBinVal,1,self.binaryRules["Bytessize"]*8)
+            binVal = "0" + binVal
+            decValWOPrefix = BitToDecInBytes(binVal,self.binaryRules["Bytessize"])
+            if decValWOPrefix == 0 then
+                self.setDecVal(pow(2,FullBinVal.len) * -1)
+            end if
+        end if
+    end if
 end function
 
+BaseNumericDataType._binaryStringToBinaryArray = function(binaryString)
+    binaryVal = []
+    for i in range(0,(self.binaryRules["Bytessize"]-1))
+        binaryVal.push(slice(binaryString,i*8,(i+1)*8-1))
+    end for
+    return binaryVal
+end function
 BaseNumericDataType.computeBinaryValFromDecVal = function()
     decVal = str(self.getDecVal())
-    if slice(decVal,1,decVal.len-1) != "-" then
-
+    if slice(decVal,0,0) != "-" then
+        binVal = DecToBinInBytes(decVal.val,self.binaryRules["Bytessize"])
+        binVal = self._binaryStringToBinaryArray(binVal)
+        self.setBinaryVal(binVal)
+    else
+        decVal = slice(decVal,1,decVal.len)
+        binVal = DecToBinInBytes(decVal,self.binaryRules["Bytessize"])
+        binVal = self._binaryStringToBinaryArray(binVal)
+        switch = binVal[0]
+        switch = "1"+slice(switch,1,7)
+        self.setBinaryVal(binVal)
     end if
 end function
 
@@ -169,7 +189,7 @@ end function
 BaseNumericDataType.computeHexValFromBinaryVal = function()
     binaryVal = self.getBinaryVal()
     FullBinVal = self._provideFullBinaryString()
-    hexVal = BinToHexInBytes(FullBinVal,self.binaryRules["Bitessize"])
+    hexVal = BinToHexInBytes(FullBinVal,self.binaryRules["Bytessize"]).val
     if self.hexRules["WithZeroX"] == 0 then
         hexVal = slice(hexVal,2,self.hexRules["Size"])
     end if
@@ -178,7 +198,6 @@ end function
 
 BaseNumericDataType.computeBinaryValFromHexVal = function()
     hexVal = self.getHexVal
-
 end function
 
 
