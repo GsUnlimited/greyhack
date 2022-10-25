@@ -3,11 +3,10 @@ import_code("./Datatypes.src":"./Datatypes.src")
 TestDataTypes = new TestCase.construct("TestDataTypes")
 testVal = new BaseNumericDataType.construct()
 testVal.configureRules(0,1,1)
-//print(testVal)
 testVal.setDecVal(7)
 testVal.setBinaryVal(["00000111"])
-testVal.setHexVal("0x07")
-TestDataTypes.assertSame(testVal.getDecVal(),7,"test that BaseNumericDataType.setDecVal(7) saves the value properly and returns it properly with .getDecVal")
+testVal.setHexVal("0x0007")
+TestDataTypes.assertSame(testVal.getDecVal(),34,"test that BaseNumericDataType.setDecVal(34) saves the value properly and returns it properly with .getDecVal")
 
 
 
