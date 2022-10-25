@@ -230,26 +230,34 @@ end function
 
 
 UIntEight = new BaseNumericDataType.construct()
+UIntEight.className = "UInteight"
 UIntEight.configureRules(0,1,1)
 
 IntEight = new BaseNumericDataType.construct()
+IntEight.className = "IntEight"
 IntEight.configureRules(1,1,1)
 
 UIntSixTeen = new BaseNumericDataType.construct()
+UIntSixTeen.className = "UInteight"
 UIntSixTeen.configureRules(0,2,1)
 
 IntSixTeen = new BaseNumericDataType.construct()
+IntSixTeen.className = "IntSixTeen"
 IntSixTeen.configureRules(1,2,1)
 
 
 UIntThirtyTwo = new BaseNumericDataType.construct()
+UIntThirtyTwo.className = "UIntThirtyTwo"
 UIntThirtyTwo.configureRules(0,4,1)
 
 IntThirtyTwo = new BaseNumericDataType.construct()
+UIntThirtyTwo.className = "IntThirtyTwo"
 IntThirtyTwo.configureRules(1,4,1)
 
 UIntSixtyFour = new BaseNumericDataType.construct()
+UIntSixtyFour.className = "UIntSixtyFour"
 UIntSixtyFour.configureRules(0,8,1)
 
 IntSixtyFour = new BaseNumericDataType.construct()
+IntSixtyFour.className = "IntSixtyFour"
 IntSixtyFour.configureRules(1,8,1)
