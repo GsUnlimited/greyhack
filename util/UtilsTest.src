@@ -1,0 +1,9 @@
+import_code("../TestFramework/TestFramework.src":"../TestFramework/TestFramework.src")
+import_code("Utils.src":"Utils.src")
+UtilsTest = new TestCase.construct("UtilsTest")
+input = "0000HBe"
+result = fullStringSplit(input)
+toBe = ["0","0","0","0","H","B","e"]
+print(result)
+print(toBe)
+UtilsTest.assertSame(result,toBe,"assert that result equals the splited Version of input aka toBe")

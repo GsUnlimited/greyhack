@@ -1,0 +1,9 @@
+import_code("../checkers/checker.src":"../checkers/checkers.src")
+fullStringSplit = function(str)
+    checkIsString(str,@exit,"fullStringSplit: str has to be of type string ."+typeof(str)+" for str given")
+    result = []
+    for char in str
+        result.push(char)
+    end for
+    return result
+end function
