@@ -1,4 +1,5 @@
 import_code("../Mathlib/Mathlib.src":"../Mathlib/Mathlib.src")
+import_code("../../util/Utils.src":"../../util/Utils.src")
 HexString = {}
 HexString.construct = function(hexstring)
     if hexstring[0] != "0" then
@@ -65,7 +66,7 @@ end if
 if BitNumInStr.len < ByteNum * 8 then
     return exit("the provided BitNum is too low. Expected was a size of:"+ByteNum+" you provided a Bitnum of"+BitNum / 8 +".")
 end if
-BitInArray = BitNumInStr.split("")
+BitInArray = fullStringSplit(BitNumInStr)
 i = 0
 hexval = []
 while ByteNum*2 != i 
@@ -92,7 +93,7 @@ end function
 
 HexToNible_No_ZEROX = function(hexval)
     hexval = str(DecToBinInBytes(hexmap.indexOf(hexval),1).val)
-    hexval = hexval.split("")
+    hexval = fullStringSplit(hexval)
     hexval = slice(hexval,4,8)
     hexval = str(hexval.join(""))
     nibleVal = hexval
