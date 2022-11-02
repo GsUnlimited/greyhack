@@ -1,0 +1,13 @@
+import_code("DataView.src":"DataView.src")
+import_code("../../TestFramework/TestFramework.src":"../../TestFramework/TestFramework.src")
+import_code("../ArrayBuffer/ArrayBuffer.src":"../ArrayBuffer/ArrayBuffer.src")
+TestDataView = new TestCase.construct("TestDataView")
+arrBuff = new ArrayBuffer.construct(256)
+arrBuff._buffer[0] = "00001111"
+TestDataView.assertSame([arrBuff._buffer[0]], ["00001111"],"Test that a value can be written to the array buffers buffer")
+dv = new DataView.construct(arrBuff)
+val = dv.getUIntEight(0)
+TestDataView.assertSame(val.getBinaryVal(),[dv.getNestedBuffer()[0]],"00001111","Test that a value can be read from the dataviews nested buffer")
+uIntEight = DataTypeWrapperBin(UIntEight,["11111111"])
+dv.setUIntEight(1,uIntEight)
+TestDataView.assertSame([dv.getNestedBuffer()[1]], ["11111111"],"Test that a value can be written to the dataviews nested buffer") 

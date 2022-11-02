@@ -6,6 +6,7 @@ ArrayBuffer.construct = function(sizeinBites)
     for i in range(0,sizeinBites-1)  
         buffer.push(0)
     end for
+    self = new ArrayBuffer
     self._buffer = buffer
     return self
 end function
