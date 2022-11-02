@@ -1,0 +1,8 @@
+import_code("../../VMBaseBuildingBlocks/DataView/DataView.src":"../../VMBaseBuildingBlocks/DataView/DataView.src")
+
+import_code("../../VMBaseBuildingBlocks/ArrayBuffer/ArrayBuffer.src":"../../VMBaseBuildingBlocks/ArrayBuffer/ArrayBuffer.src")
+createMemory = function(sizeInBytes)
+    ab = new ArrayBuffer.construct(sizeInBytes)
+    dv = new DataView.construct(ab)
+    return dv
+end function

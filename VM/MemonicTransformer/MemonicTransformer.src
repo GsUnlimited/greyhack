@@ -1,0 +1,14 @@
+import_code("../../../VMBaseBuildingBlocks/DataView/DataView.src":"../../../VMBaseBuildingBlocks/DataView/DataView.src")
+
+MemonicTransformer = function(memonics)
+    transformedMemonics = {}
+    for memonic in memonics 
+        print(memonic)
+        transformedMemonics[memonic.value["name"]] = MemonicTranslater(memonic.value["code"])
+    end for
+    return transformedMemonics 
+end function
+
+MemonicTranslater = function(memonicCode)
+    return DataTypeWrapperHex(UIntEight,memonicCode)
+end function

@@ -1,0 +1,31 @@
+import_code("CPU.src":"CPU.src")
+import_code("createMemory.src":"createMemory.src")
+import_code("../../TestFramework/TestFramework.src":"../../TestFramework/TestFramework.src")
+import_code("../memonics/memonics.src":"../memonics/memonics.src")
+import_code("../MemonicTransformer/MemonicTransformer.src":"../MemonicTransformer/MemonicTransformer.src")
+
+
+CPUTest = new TestCase.construct("CPUTest")
+memory = createMemory(256)
+print(memory.className)
+cpu = new CPU.construct(memory)
+ip = cpu._getRegister("ip").getBinaryVal()
+testRegisterMemory = createMemory(cpu.registers.getNestedBuffer().len)
+ToBe = testRegisterMemory.getUIntSixtyFour(cpu.registerMap["ip"]).getBinaryVal()
+CPUTest.assertSame(ip,ToBe,"Test that the value from the register is binary equal to the value of the test registerMemory")
+
+numberForIpRegister = DataTypeWrapperDec(UIntSixtyFour,255)
+cpu._setRegister("r1", numberForIpRegister)
+ip = cpu._getRegister("r1").getBinaryVal()
+testRegisterMemory = createMemory(cpu.registers.getNestedBuffer().len)
+testRegisterMemory.setUIntSixtyFour(cpu.registerMap["r1"],numberForIpRegister)
+ToBe = testRegisterMemory.getUIntSixtyFour(cpu.registerMap["r1"]).getBinaryVal()
+CPUTest.assertSame(ip,ToBe,"Test that the value from r1 can be properly can be written and read properly")
+transformedMemonics = MemonicTransformer(memonics)
+print(transformedMemonics)
+memory = createMemory(256)
+
+cpu = new CPU.construct(memory)
+
+
+
