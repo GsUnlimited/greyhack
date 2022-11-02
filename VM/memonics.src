@@ -1,0 +1,11 @@
+memonics = {}
+memonics.MOV_MEM_REG = {description: "Moves value from memory to register",code: "0x10",group:"MOV"}
+memonics.MOV_REG_MEM = {description: "Moves value from register to memory",code: "0x11",group:"MOV"}
+memonics.MOV_REG_REG = {description: "Moves value from register to register",code: "0x12",group:"MOV"}
+memonics.MOV_LIT_REG = {description: "Moves value directly to register",code: "0x13",group:"MOV"}
+memonics.MOV_LIT_MEM = {description: "Moves value directly to memory",code: "0x14",group:"MOV"}
+memonics.ADD = {description: "Adds to values together and safes in acc register",code: "0x15",group:"ADD"}
+memonics.PUSH_LIT = {description: "Pushes a value directly to stack",code: "0x16",group:"PUSH"}
+memonics.PUSH_REG = {description: "Pushes a value  from register to stack",code: "0x17",group:"PUSH"}
+memonics.PUSH_MEM = {description: "Pushes a value from memory to stack",code: "0x18",group:"PUSH"}
+memonics.POP
