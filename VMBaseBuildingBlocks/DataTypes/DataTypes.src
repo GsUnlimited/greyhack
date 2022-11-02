@@ -221,11 +221,11 @@ BaseNumericDataType.computeBinaryValFromHexVal = function()
     hexVal = self.getHexVal()
     if self.hexRules["WithZeroX"] == 0 then
         hexVal = slice(hexVal,2,self.binaryRules["Bytessize"]*4)
-        binVal = BinToHexInBytes(hexVal)
-        self.setBinaryVal(binVal)
+        binVal = HexToBinInBytes(hexVal,self.binaryRules["Bytessize"])
+        self.setBinaryVal(self._binaryStringToBinaryArray(binVal.val))
     else
-        binVal = BinToHexInBytes(hexVal)
-        self.setBinaryVal(binVal)
+        binVal = HexToBinInBytes(hexVal,self.binaryRules["Bytessize"])
+        self.setBinaryVal(self._binaryStringToBinaryArray(binVal.val))
     end if
 end function
 

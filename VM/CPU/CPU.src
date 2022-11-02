@@ -1,0 +1,106 @@
+import_code("../../../VMBaseBuildingBlocks/DataView/DataView.src":"../../../VMBaseBuildingBlocks/DataView/DataView.src")
+import_code("../memonics/memonics.src":"../memonics/memonics.src")
+import_code("createMemory.src":"createMemory.src")
+
+CPU = {}
+CPU.className = "CPU"
+CPU.construct = function(memory)
+    self = new CPU
+    //typeCheckEqual(memory.className,"DataView",@exit,self.className+".construct : memory has to be of type DataView(object.className = DataView))")
+    self.memory = memory
+    self.registerNames = ["ip","acc","r1","r2","r3","r4","r5","r6","r7","r8"]
+    self.registers = createMemory(self.registerNames.len * 8)
+    self.registerMap = self._makeRegisterMap()
+    return self
+end function
+
+CPU._makeRegisterMap = function()
+    rn = self.registerNames
+    registerMap = {}
+    for i in range(0,rn.len-1)
+        registerMap[self.registerNames[i]] = i * 8
+    end for
+    return registerMap
+end function
+
+CPU._getRegister = function(name)
+    if (self.registerMap.hasIndex(name) == false) then 
+        exit(self.className + "._getRegister: register "+name+" is not available in this cpu")
+    end if
+    return self.registers.getUIntSixtyFour(self.registerMap[name])
+end function
+
+CPU._setRegister = function(name,value)
+    if (self.registerMap.hasIndex(name) == false) then 
+        exit(self.className + "._setRegister: register "+name+" is not available in this cpu")
+    end if
+    return self.registers.setUIntSixtyFour(self.registerMap[name],value)
+end function
+
+CPU._getRegisterNameByIndex = function(registerIndex)
+    typeCheckEqual(registerIndex,typeof(1),@exit,self.className+"._getRegisterNameByIndex : registerIndex has to be of type "+typeof(1)+")")
+    if(registerIndex > registerNames.len or registerIndex < 0) then
+        exit(self.className+"._getRegisterNameByIndex : registerIndex is out of range. min index is 0 , max index is "+registerNames.len-1+".")
+    end if
+    return self.registerNames[registerIndex]
+end function
+
+CPU._fetchByte = function()
+    NextInstructionAddress = self.getRegister("ip").getDecVal()
+    instruction = self.memory.getUIntEight(NextInstructionAddress)
+    incrementedIpRegister = DataTypeWrapperDec(UIntSixtyFour,NextInstructionAddress+1)
+    self.setRegister("ip",incrementedIpRegister)
+    return instruction
+end function
+
+CPU._fetchTwoBytes = function()
+    NextInstructionAddress = self.getRegister("ip").getDecVal()
+    instruction = self.memory.getUIntSixTeen(NextInstructionAddress)
+    incrementedIpRegister = DataTypeWrapperDec(UIntSixtyFour,NextInstructionAddress+2)
+    self.setRegister("ip",incrementedIpRegister)
+    return instruction
+end function
+
+
+CPU._fetchThreeBytes = function()
+    NextInstructionAddress = self.getRegister("ip").getDecVal()
+    instruction = self.memory.getUIntThirtyTwo(NextInstructionAddress)
+    incrementedIpRegister = DataTypeWrapperDec(UIntSixtyFour,NextInstructionAddress+3)
+    self.setRegister("ip",incrementedIpRegister)
+    return instruction
+end function
+    
+CPU._fetchThreeBytes = function()
+    NextInstructionAddress = self.getRegister("ip").getDecVal()
+    instruction = self.memory.getUIntSixtyFour(NextInstructionAddress)
+    incrementedIpRegister = DataTypeWrapperDec(UIntSixtyFour,NextInstructionAddress+4)
+    self.setRegister("ip",incrementedIpRegister)
+    return instruction
+end function
+
+CPU._execute = function(instruction)
+    typeCheckEqual(instruction.className,"UIntEight",@exit,self.className+"._execute : instruction has to be of type UIntEight(object.className= UIntEight")
+    if (instruction.getHexVal() == memonics.MOV_LIT_REG.code) then
+        literalVal = self._fetchTwoBytes().getHexVal()
+        literalVal = DataTypeWrapperHex(UIntSixtyFour,literalVal)
+        register = self._fetchByte()
+        registerName = self._getRegisterNameByIndex(register.getDecVal())
+        self._setRegister(registerName,literalVal)
+        return
+    end if
+    if (instruction.getHexVal() == memonics.ADD.code) then
+        register = self._fetchByte()
+        registerName = self._getRegisterNameByIndex(register.getDecVal())
+        firstRegVal = self._getRegister(registerName)
+        register = self._fetchByte()
+        registerName = self._getRegisterNameByIndex(register.getDecVal())
+        secondRegVal = self._getRegister(registerName)
+        finalVal = DataTypeWrapperDec(UIntSixtyFour,firstRegVal.getDecVal()+secondRegVal.getDecVal())
+        self._setRegister("acc",finalVal)
+        return
+    end if
+end function
+CPU.step = function()
+    instruction = self._fetchByte()
+    return self._execute(instruction)
+end function

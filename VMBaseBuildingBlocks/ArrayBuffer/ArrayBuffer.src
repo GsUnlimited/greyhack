@@ -4,7 +4,7 @@ ArrayBuffer.construct = function(sizeinBites)
     typeCheckEqual(sizeinBites,"number",@exit,"ArrayBuffer.construct: sizeInBytes has to be of type number")
     buffer = []
     for i in range(0,sizeinBites-1)  
-        buffer.push(0)
+        buffer.push("00000000")
     end for
     self = new ArrayBuffer
     self._buffer = buffer
