@@ -6,6 +6,7 @@ import_code("../../checkers/checkers.src":"../../checkers/checkers.src")
 DataView = {}
 DataView.className = "DataView"
 DataView.construct = function(arrayBuffer)
+    self = new DataView
     self._buffer = arrayBuffer
     return self
 end function
@@ -19,26 +20,18 @@ DataView.getBuffer = function()
 end function
 
 DataView._getDataType = function(locationIndex,byteSize,dataType)
-    print(dataType)
     typeCheckEqual(locationIndex,typeof(1),@exit,self.className+"DataView.getDataType : locationIndex has to be of type "+typeof(1)+". Provided was: "+typeof(locationIndex)+".")
     typeCheckEqual(byteSize,typeof(1),@exit,self.className+".getDataType : byteSize has to be of type "+typeof(1)+". Provided was: "+typeof(byteSize)+".")
     dataFormat = new dataType
-    print(dataFormat)
     data = slice(self.getNestedBuffer(),locationIndex,locationIndex+byteSize)
-    print(data)
     dataFormat.setBinaryVal(data)
-    print(dataFormat)
     dataFormat.computeHexValFromBinaryVal()
     dataFormat.computeDecValFromBinaryVal()
-    print(dataFormat)
     return dataFormat
 end function
 
 DataView._setDataType = function(locationIndex, byteSize, dataTypeObject)
-    print(dataTypeObject)
     for i in range(0,byteSize)
-        print(i)
-        print(locationIndex+i)
         self.getNestedBuffer()[locationIndex+i] = dataTypeObject.getBinaryVal()[i]
         if i == byteSize-1 then
             break
