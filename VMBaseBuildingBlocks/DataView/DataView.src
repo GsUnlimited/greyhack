@@ -46,21 +46,76 @@ DataView._setDataType = function(locationIndex, byteSize, dataTypeObject)
     end for
 end function
 
-DataView.getUIntEight = function(locationIndex)
-    return self._getDataType(locationIndex,1,UIntEight)
-end function
-
 DataView.setUIntEight = function(locationIndex,valObject)
     checkStrictEqual(valObject.className, "UIntEight",@exit,self.className+".setUIntEight: valObject has to be of type UIntEight")
     self._setDataType(locationIndex,1,valObject)
+end function
+
+DataView.setIntEight = function(locationIndex,valObject)
+    checkStrictEqual(valObject.className, "IntEight",@exit,self.className+".setIntEight: valObject has to be of type IntEight")
+    self._setDataType(locationIndex,1,valObject)
+end function
+
+DataView.setUIntSixTeen = function(locationIndex,valObject)
+    checkStrictEqual(valObject.className, "UIntSixTeen",@exit,self.className+".setUIntSixTeen: valObject has to be of type UIntSixTeen")
+    self._setDataType(locationIndex,2,valObject)
+end function
+
+DataView.setIntSixTeen = function(locationIndex,valObject)
+    checkStrictEqual(valObject.className, "IntSixTeen",@exit,self.className+".setUIntSixTeen: valObject has to be of type IntSixTeen")
+    self._setDataType(locationIndex,2,valObject)
+end function
+
+DataView.setUIntThirtyTwo = function(locationIndex,valObject)
+    checkStrictEqual(valObject.className, "UIntThirtyTwo",@exit,self.className+".setUIntThirtyTwo: valObject has to be of type UIntThirtyTwo")
+    self._setDataType(locationIndex,4,valObject)
+end function
+
+DataView.setIntThirtyTwo = function(locationIndex,valObject)
+    checkStrictEqual(valObject.className, "IntThirtyTwo",@exit,self.className+".setUIntThirtyTwo: valObject has to be of type IntThirtyTwo")
+    self._setDataType(locationIndex,4,valObject)
+end function
+
+DataView.setUIntSixtyFour = function(locationIndex,valObject)
+    checkStrictEqual(valObject.className, "UIntSixtyFour",@exit,self.className+".setUIntSixtyFour: valObject has to be of type UIntSixtyFour")
+    self._setDataType(locationIndex,8,valObject)
+end function
+
+DataView.setIntSixtyFour = function(locationIndex,valObject)
+    checkStrictEqual(valObject.className, "IntSixtyFour",@exit,self.className+".setIntSixtyFour: valObject has to be of type IntSixtyFour")
+    self._setDataType(locationIndex,8,valObject)
+end function
+
+DataView.getIntSixtyFour = function(locationIndex)
+    return self._getDataType(locationIndex,8, IntSixtyFour)
+end function
+
+DataView.getUIntSixtyFour = function(locationIndex)
+    return self._getDataType(locationIndex,8, UIntSixtyFour)
+end function
+
+DataView.getUIntThirtyTwo = function(locationIndex)
+    return self._getDataType(locationIndex,4, UIntThirtyTwo)
+end function
+
+DataView.getIntThirtyTwo = function(locationIndex)
+    return self._getDataType(locationIndex,4, IntThirtyTwo)
 end function
 
 DataView.getIntEight = function(locationIndex)
     return self._getDataType(locationIndex,1,IntEight)
 end function
 
-DataView.setIntEight = function(locationIndex,valObject)
-    self._setDataType(locationIndex,1,valObject)
+DataView.getUIntEight = function(locationIndex)
+    return self._getDataType(locationIndex,1,UIntEight)
+end function
+
+DataView.getUIntSixTeen = function(locationIndex)
+    return self._getDataType(locationIndex,2,UIntSixTeen)
+end function
+
+DataView.getIntSixTeen = function(locationIndex)
+    return self._getDataType(locationIndex,2,IntSixTeen)
 end function
 
 DataTypeWrapperBin = function(type,binVal)
@@ -86,19 +141,6 @@ DataTypeWrapperHex = function(type,hexVal)
     data.computeDecValFromBinaryVal()
     return data
 end function
-
-
-arrBuff = new ArrayBuffer.construct(256)
-print(arrBuff)
-arrBuff._buffer[0] = "00001111"
-print(arrBuff)
-dv = new DataView.construct(arrBuff)
-print(dv)
-val = dv.getUIntEight(0)
-print(val)
-uIntEight = DataTypeWrapperBin(UIntEight,["11111111"])
-dv.setUIntEight(1,uIntEight)
-print(dv)
 
 
 
