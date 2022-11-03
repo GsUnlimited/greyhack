@@ -39,50 +39,50 @@ end function
 
 CPU._getRegisterNameByIndex = function(registerIndex)
     typeCheckEqual(registerIndex,typeof(1),@exit,self.className+"._getRegisterNameByIndex : registerIndex has to be of type "+typeof(1)+")")
-    if(registerIndex > registerNames.len or registerIndex < 0) then
-        exit(self.className+"._getRegisterNameByIndex : registerIndex is out of range. min index is 0 , max index is "+registerNames.len-1+".")
+    if(registerIndex-1 > self.registerNames.len or registerIndex < 0) then
+        exit(self.className+"._getRegisterNameByIndex : registerIndex is out of range. min index is 0 , max index is "+self.registerNames.len+".")
     end if
-    return self.registerNames[registerIndex]
+    return self.registerNames[registerIndex-1]
 end function
 
 CPU._fetchByte = function()
-    NextInstructionAddress = self.getRegister("ip").getDecVal()
+    NextInstructionAddress = self._getRegister("ip").getDecVal()
     instruction = self.memory.getUIntEight(NextInstructionAddress)
     incrementedIpRegister = DataTypeWrapperDec(UIntSixtyFour,NextInstructionAddress+1)
-    self.setRegister("ip",incrementedIpRegister)
+    self._setRegister("ip",incrementedIpRegister)
     return instruction
 end function
 
 CPU._fetchTwoBytes = function()
-    NextInstructionAddress = self.getRegister("ip").getDecVal()
+    NextInstructionAddress = self._getRegister("ip").getDecVal()
     instruction = self.memory.getUIntSixTeen(NextInstructionAddress)
     incrementedIpRegister = DataTypeWrapperDec(UIntSixtyFour,NextInstructionAddress+2)
-    self.setRegister("ip",incrementedIpRegister)
+    self._setRegister("ip",incrementedIpRegister)
     return instruction
 end function
 
 
-CPU._fetchThreeBytes = function()
-    NextInstructionAddress = self.getRegister("ip").getDecVal()
+CPU._fetchFourBytes = function()
+    NextInstructionAddress = self._getRegister("ip").getDecVal()
     instruction = self.memory.getUIntThirtyTwo(NextInstructionAddress)
     incrementedIpRegister = DataTypeWrapperDec(UIntSixtyFour,NextInstructionAddress+3)
-    self.setRegister("ip",incrementedIpRegister)
+    self._setRegister("ip",incrementedIpRegister)
     return instruction
 end function
     
-CPU._fetchThreeBytes = function()
-    NextInstructionAddress = self.getRegister("ip").getDecVal()
+CPU._fetchEightBytes = function()
+    NextInstructionAddress = self._getRegister("ip").getDecVal()
     instruction = self.memory.getUIntSixtyFour(NextInstructionAddress)
-    incrementedIpRegister = DataTypeWrapperDec(UIntSixtyFour,NextInstructionAddress+4)
-    self.setRegister("ip",incrementedIpRegister)
+    incrementedIpRegister = DataTypeWrapperDec(UIntSixtyFour,NextInstructionAddress+8)
+    self._setRegister("ip",incrementedIpRegister)
     return instruction
 end function
 
 CPU._execute = function(instruction)
-    typeCheckEqual(instruction.className,"UIntEight",@exit,self.className+"._execute : instruction has to be of type UIntEight(object.className= UIntEight")
+    checkStrictEqual(instruction.className,"UIntEight",@exit,self.className+"._execute : instruction has to be of type UIntEight(object.className= UIntEight\n got: "+instruction.className+"")
     if (instruction.getHexVal() == memonics.MOV_LIT_REG.code) then
-        literalVal = self._fetchTwoBytes().getHexVal()
-        literalVal = DataTypeWrapperHex(UIntSixtyFour,literalVal)
+        literalVal = self._fetchEightBytes().getDecVal()
+        literalVal = DataTypeWrapperDec(UIntSixtyFour,literalVal)
         register = self._fetchByte()
         registerName = self._getRegisterNameByIndex(register.getDecVal())
         self._setRegister(registerName,literalVal)
@@ -102,5 +102,6 @@ CPU._execute = function(instruction)
 end function
 CPU.step = function()
     instruction = self._fetchByte()
+    instructiom = DataTypeWrapperDec(UIntEight,instruction.getDecVal())
     return self._execute(instruction)
 end function

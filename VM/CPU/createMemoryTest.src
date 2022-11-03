@@ -1,0 +1,8 @@
+import_code("createMemory.src":"createMemory.src")
+import_code("../../TestFramework/TestFramework.src":"../../TestFramework/TestFramework.src")
+byteNum=65536
+CreateMemoryTest = new TestCase.construct("CreateMemoryTest")
+memory = createMemory(byteNum)
+CreateMemoryTest.assertSame(memory.className,"DataView","Test that createMemory returns a DataView")
+CreateMemoryTest.assertSame(typeof(memory.getNestedBuffer()),typeof([]),"Test that createMemory returns a DataView with an array")
+CreateMemoryTest.assertSame(memory.getNestedBuffer().len, byteNum,"test that createMemory returns a DataView with an array of "+byteNum+" elements")

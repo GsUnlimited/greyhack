@@ -7,7 +7,6 @@ import_code("../MemonicTransformer/MemonicTransformer.src":"../MemonicTransforme
 
 CPUTest = new TestCase.construct("CPUTest")
 memory = createMemory(256)
-print(memory.className)
 cpu = new CPU.construct(memory)
 ip = cpu._getRegister("ip").getBinaryVal()
 testRegisterMemory = createMemory(cpu.registers.getNestedBuffer().len)
@@ -22,10 +21,45 @@ testRegisterMemory.setUIntSixtyFour(cpu.registerMap["r1"],numberForIpRegister)
 ToBe = testRegisterMemory.getUIntSixtyFour(cpu.registerMap["r1"]).getBinaryVal()
 CPUTest.assertSame(ip,ToBe,"Test that the value from r1 can be properly can be written and read properly")
 transformedMemonics = MemonicTransformer(memonics)
-print(transformedMemonics)
-memory = createMemory(256)
 
+memory = createMemory(256)
+memory.getNestedBuffer()[0] = transformedMemonics["MOV_LIT_REG"]
+memory.getNestedBuffer()[1] = "00000000"
+memory.getNestedBuffer()[2]= "00000000"
+memory.getNestedBuffer()[3]= "00000000"
+memory.getNestedBuffer()[4]= "00000000"
+memory.getNestedBuffer()[5]= "00000000"
+memory.getNestedBuffer()[6]= "00000000"
+memory.getNestedBuffer()[7] = "00000000"
+memory.getNestedBuffer()[8]= "00000011"
+memory.getNestedBuffer()[9]= "00000011"
+
+memory.getNestedBuffer()[11] = transformedMemonics["MOV_LIT_REG"]
+memory.getNestedBuffer()[12] = "00000000"
+memory.getNestedBuffer()[13] = "00000000"
+memory.getNestedBuffer()[14] = "00000000"
+memory.getNestedBuffer()[15]= "00000000"
+memory.getNestedBuffer()[16]= "00000000"
+memory.getNestedBuffer()[17]= "00000000"
+memory.getNestedBuffer()[18]= "00000000"
+memory.getNestedBuffer()[19]= "00000111"
+memory.getNestedBuffer()[20]= "00000100"
+
+memory.getNestedBuffer()[21]= transformedMemonics["ADD"]
+memory.getNestedBuffer()[22]= "00000011"
+memory.getNestedBuffer()[23]= "00000100"
 cpu = new CPU.construct(memory)
+i = 0
+while i <= 4 
+    cpu.step()
+    i = i + 1
+end while
+CPUTest.assertSame(cpu._getRegister(cpu._getRegisterNameByIndex(3)).getDecVal(),3,"Test that the literal Value gets moved to the r1 register")
+CPUTest.assertSame(cpu._getRegister(cpu._getRegisterNameByIndex(4)).getDecVal(),7,"Test that the literal Value gets moved to the r2 register")
+CPUTest.assertSame(cpu._getRegister(cpu._getRegisterNameByIndex(2)).getDecVal(),10,"Test that the value from r1 and r2 gets added and stored in the acc register")
+
+
+
 
 
 
