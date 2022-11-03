@@ -22,10 +22,45 @@ testRegisterMemory.setUIntSixtyFour(cpu.registerMap["r1"],numberForIpRegister)
 ToBe = testRegisterMemory.getUIntSixtyFour(cpu.registerMap["r1"]).getBinaryVal()
 CPUTest.assertSame(ip,ToBe,"Test that the value from r1 can be properly can be written and read properly")
 transformedMemonics = MemonicTransformer(memonics)
-print(transformedMemonics)
-memory = createMemory(256)
 
+memory = createMemory(256)
+print(memory.getNestedBuffer())
+memory.getNestedBuffer()[0] = transformedMemonics["MOV_LIT_REG"].getBinaryVal()[0]
+memory.getNestedBuffer()[1] = "00000011"
+memory.getNestedBuffer()[2] = "00000000"
+memory.getNestedBuffer()[3]= "00000000"
+memory.getNestedBuffer()[4]= "00000000"
+memory.getNestedBuffer()[5]= "00000000"
+memory.getNestedBuffer()[6]= "00000000"
+memory.getNestedBuffer()[7]= "00000000"
+memory.getNestedBuffer()[8]= "00000000"
+memory.getNestedBuffer()[9]= "00000000"
+memory.getNestedBuffer()[10]= "00000001"
+print(memory.getNestedBuffer())
+memory.getNestedBuffer()[11] = transformedMemonics["MOV_LIT_REG"].getBinaryVal()[0]
+memory.getNestedBuffer()[12] = "00000100"
+memory.getNestedBuffer()[13] = "00000011"
+memory.getNestedBuffer()[14] = "00000000"
+memory.getNestedBuffer()[15]= "00000000"
+memory.getNestedBuffer()[16]= "00000000"
+memory.getNestedBuffer()[17]= "00000000"
+memory.getNestedBuffer()[18]= "00000000"
+memory.getNestedBuffer()[19]= "00000000"
+memory.getNestedBuffer()[20]= "00000000"
+memory.getNestedBuffer()[21]= "00000000"
+memory.getNestedBuffer()[22]= "00000010"
+print(memory.getNestedBuffer())
+memory.getNestedBuffer()[23]= transformedMemonics["ADD"].getBinaryVal()[0]
+memory.getNestedBuffer()[24]= "00000011"
+memory.getNestedBuffer()[25]= "00000010"
+print(memory.getNestedBuffer())
 cpu = new CPU.construct(memory)
+i = 0
+while i <= 24 
+    cpu.step
+    print(memory.getNestedBuffer())
+    i = i + 1
+end while
 
 
 
