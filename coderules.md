@@ -34,3 +34,12 @@ ErrorMessages:
             if param == 1 then
                 exit("A.construct: param has to be 1")
         end function
+
+Test Rules:
+    Rule 1: every component should be tested as granular as possible.
+    Rule 2: every component should be tested with benchmarks. Here a litte example:
+        beforeSomething = time
+        something()
+        afterSomething = time
+        result = afterSomething - beforeSomething
+        print("Time to do something :"+result+"")

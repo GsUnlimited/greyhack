@@ -2,10 +2,11 @@ import_code("../../checkers/checkers.src":"../../checkers/checkers.src")
 ArrayBuffer = {}
 ArrayBuffer.construct = function(sizeinBites) 
     typeCheckEqual(sizeinBites,"number",@exit,"ArrayBuffer.construct: sizeInBytes has to be of type number")
-    buffer = []
-    for i in range(0,sizeinBites-1)  
-        buffer.push("00000000")
-    end for
+    buffer = ["00000000"]
+    while(sizeinBites > 1) 
+        buffer = buffer + buffer
+        sizeinBites = sizeinBites / 2
+    end while
     self = new ArrayBuffer
     self._buffer = buffer
     return self

@@ -1,20 +1,38 @@
 import_code("../../TestFramework/TestFramework.src":"../../TestFramework/TestFramework.src")
 import_code("../ArrayBuffer/ArrayBuffer.src":"../ArrayBuffer/ArrayBuffer.src")
-
-a = new ArrayBuffer.construct(4)
+ByteNum = 65536
+print(typeof(ByteNum))
+beforeArrayBufferConstruct = time
+a = new ArrayBuffer.construct(ByteNum)
+afterArrayBufferConstruct = time
+ArrayBufferTime = afterArrayBufferConstruct - beforeArrayBufferConstruct
+print("time to construct an ArrayBuffer: "+ArrayBufferTime+"")
+print()
 TestArrayBuffer = new TestCase.construct("TestArrayBuffer")
 
-
+aToBe = []
 // test ArrayBuffer.construct and ArrayBuffer.getBuffer work (works in game but not in the interpreter for vscode)
-aToBe = [0,0,0,0]
-print(a.getBuffer)
-print(aToBe)
-TestArrayBuffer.assertSame(a._buffer,aToBe,"test that ArrayBuffer.construct(4) stores an array with lenght 4 and with 0(number) as every value")
-TestArrayBuffer.assertSame(a.getBuffer,aToBe,"test that ArrayBuffer.construct(4) stores an array with lenght 4 and with 0(number) as every value")
-TestArrayBuffer.assertSame(a.getBuffer(),aToBe,"test that ArrayBuffer.construct(4) stores an array with lenght 4 and with 0(number) as every value")
-TestArrayBuffer.assertSame(a.getBuffer(),[0,0,0,0],"test that ArrayBuffer.construct(4) stores an array with lenght 4 and with 0(number) as every value")
+i = 0
+beforeDummyBuild = time
+while i < ByteNum
+    aToBe.push("00000000")
+    i = i + 1
+end while
+afterDummyBuild = time
+DummyTime = afterDummyBuild - beforeDummyBuild
+print("time to construct the dummy: "+DummyTime+"")
+print()
+percentImprovement = DummyTime / ArrayBufferTime
+print(percentImprovement)
+TestArrayBuffer.assertSame(a._buffer,aToBe,"test that ArrayBuffer.construct("+ByteNum+") stores an array with lenght "+ByteNum+" and with 8 0s(string) as every value")
+TestArrayBuffer.assertSame(a.getBuffer(),aToBe,"test that ArrayBuffer.construct("+ByteNum+") stores an array with lenght "+ByteNum+" and with 8 0s(string) as every value and can be fetched by getBuffer")
+TestArrayBuffer.assertSame(a.getBuffer().len,ByteNum,"test that ArrayBuffer.construct("+ByteNum+") stores an array with lenght "+ByteNum+" and 8 0s(string) as every value")
 //test ArrayBuffer.slice works (same bug here)
-TestArrayBuffer.assertSame(a.slice(0,3),[0,0,0],"test that a.slice (ArrayBuffer.slice) returns [0,0,0] if a = new ArrayBuffer.construct(4)")
+aToBe = a.slice(aToBe,0,ByteNum-1)
+a = a.slice(0,ByteNum-1)
+TestArrayBuffer.assertSame(a,aToBe,"test that a.slice (ArrayBuffer.slice) returns an array of length "+ByteNum-1+" if a = new ArrayBuffer.construct("+ByteNum+")")
 //Error Testing cant happen because of the game 
+
+print(time)
 
 
