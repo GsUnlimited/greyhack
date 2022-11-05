@@ -1,62 +1,99 @@
+import_code("../checkers/checkers.src":"../checkers/checkers.src")
 TestCase = {}
+TestCase.className = "TestCase"
+
 TestCase.construct = function(TestName)
-if typeof(TestName) != "string" then
-    return exit("Testname has to be of type string you provided: "+typeof(TestName)+"")
-end if
-self._succesColor = "<color=#00ff00>"
-self._failColor = "<color=#ff0000>"
-self.TestName = TestName
-return self
-end function
-TestCase.printMessage = function(message)
-if typeof(message) != "string" then
-    return print("message has to be of type string you provided: "+typeof(message)+" at TestCase.printMessage line 12")
-end if
-print(message+"\n")
+	if typeof(TestName) != "string" then
+		return exit("Testname has to be of type string you provided: " + typeof(TestName) + "")
+	end if
+
+	self._succesColor = "<color=#00ff00>"
+	self._failColor = "<color=#ff0000>"
+	self.TestName = TestName
+	self._benchmarkMap = {}
+	return self
 end function
 
+TestCase.printMessage = function(message)
+	if typeof(message) != "string" then
+		return print("message has to be of type string you provided: " + typeof(message) + " at TestCase.printMessage line 12")
+	end if
+	print(message + "\n")
+end function
 
 TestCase.printSucces = function(description)
-    self.printMessage(self._succesColor+" "+self.TestName+" "+description+" PASSED.")
+	self.printMessage(self._succesColor + " " + self.TestName + " " + description + " PASSED.")
 end function
-
 
 TestCase.printFail = function(description)
-    self.printMessage(self._failColor+" "+self.TestName+" "+description+" FAIL.")
+	self.printMessage(self._failColor + " " + self.TestName + " " + description + " FAIL.")
 end function
 
-TestCase.assertSame = function(_input,toBe,description)
-        if _input == toBe then
-            self.printSucces(description)
-        else
-            self.printFail(description)
-            self.printMessage("Expected: "+toBe+". Got: "+_input+".")
-        end if
+TestCase.assertSame = function(_input, toBe, description)
+	if _input == toBe then
+		self.printSucces(description)
+	else
+		self.printFail(description)
+		self.printMessage("Expected: " + toBe + ". Got: " + _input + ".")
+	end if
+
 end function
 
-TestCase.assertTrue = function(_input,description)
-    self.assertSame(_input,true,description)
+TestCase.assertTrue = function(_input, description)
+	self.assertSame(_input, true, description)
 end function
 
-TestCase.assertSameBaseType = function(_input,typeToBe,description)
-    _inputType = typeof(_input)
-    self.assertSame(_inputType,typeToBe,description)
+TestCase.assertSameBaseType = function(_input, typeToBe, description)
+	_inputType = typeof(_input)
+	self.assertSame(_inputType, typeToBe, description)
 end function
 
-TestCase.assertFalse = function(_input,description)
-    self.assertSame(_input,false,description)
+TestCase.assertFalse = function(_input, description)
+	self.assertSame(_input, false, description)
 end function
 
-TestCase.assertNotSameBaseType = function(_input,typeToBe,description)
-    _inputType = typeof(_input)
-    self.assertNotSame(_inputType,typeToBe,description)
+TestCase.assertNotSameBaseType = function(_input, typeToBe, description)
+	_inputType = typeof(_input)
+	self.assertNotSame(_inputType, typeToBe, description)
 end function
 
-TestCase.assertNotSame = function(_input,toBe,description)
-    if _input != toBe then
-        self.printSucces(description)
-    else
-        self.printFail(description)
-        self.printMessage("Expected: "+toBe+". Got: "+_input+".")
-        end if
+TestCase.assertNotSame = function(_input, toBe, description)
+	if _input != toBe then
+		self.printSucces(description)
+	else
+		self.printFail(description)
+		self.printMessage("Expected: " + toBe + ". Got: " + _input + ".")
+	end if
+
+end function
+
+TestCase.registerNewBenchmark = function(name)
+	checkIsString(name, @exit, self.className + ".registerNewBenchmark : name has to be of type string")
+	self._benchmarkMap[name] = []
+end function
+
+TestCase.setTimeBefore = function(name, timeStamp)
+	checkIsString(name, @exit, self.className + ".setTimeBefore : name has to be of type string")
+	typeCheckEqual(timeStamp, typeof(1), @exit, self.className + ".setTimeBefore : timeStamp has to be of type number")
+	benchmark = self._benchmarkMap[name] 
+    benchmark.push(timeStamp)
+
+end function
+
+TestCase.setTimeAfter = function(name, timeStamp)
+	checkIsString(name, @exit, self.className + ".setTimeAtfer : name has to be of type string")
+	typeCheckEqual(timeStamp, typeof(1), @exit, self.className + ".setTimeAtfer : timeStamp has to be of type number")
+	benchmark = self._benchmarkMap[name] 
+    benchmark.push(timeStamp)
+end function
+
+TestCase.getProcedureTime = function(name)
+	checkIsString(name, @exit, self.className + ".getProcedureTime : name has to be of type string")
+
+	before = self._benchmarkMap[name][0]
+
+	after = self._benchmarkMap[name][1]
+
+	return after - before
+
 end function
