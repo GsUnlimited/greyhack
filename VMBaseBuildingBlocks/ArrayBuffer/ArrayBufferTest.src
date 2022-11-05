@@ -28,7 +28,7 @@ TestArrayBuffer.assertSame(a._buffer,aToBe,"test that ArrayBuffer.construct("+By
 TestArrayBuffer.assertSame(a.getBuffer(),aToBe,"test that ArrayBuffer.construct("+ByteNum+") stores an array with lenght "+ByteNum+" and with 8 0s(string) as every value and can be fetched by getBuffer")
 TestArrayBuffer.assertSame(a.getBuffer().len,ByteNum,"test that ArrayBuffer.construct("+ByteNum+") stores an array with lenght "+ByteNum+" and 8 0s(string) as every value")
 //test ArrayBuffer.slice works (same bug here)
-aToBe = a.slice(aToBe,0,ByteNum-1)
+aToBe = slice(aToBe,0,ByteNum-1)
 a = a.slice(0,ByteNum-1)
 TestArrayBuffer.assertSame(a,aToBe,"test that a.slice (ArrayBuffer.slice) returns an array of length "+ByteNum-1+" if a = new ArrayBuffer.construct("+ByteNum+")")
 //Error Testing cant happen because of the game 

@@ -1,0 +1,16 @@
+import_code("TestFramework.src":"TestFramework.src")
+TestCaseTest = new TestCase.construct("TestCaseTest")
+TestCaseTest.assertSame(TestCaseTest.TestName,"TestCaseTest","test that TestName is properly saved")
+TestCaseTest.assertTrue(true,"test that true is true")
+TestCaseTest.assertFalse(false,"test that false is false")
+TestCaseTest.assertSameBaseType("some","string","test that the string 'some' is of type string ")
+a = []
+b = {}
+TestCaseTest.assertSameBaseType(a,"list","test that a list is of type list")
+TestCaseTest.assertNotSameBaseType(a,"map","test that a list is not of type map")
+TestCaseTest.registerNewBenchmark("test")
+TestCaseTest.setTimeBefore("test",time)
+TestCaseTest.setTimeAfter("test",time)
+procedureTime = TestCaseTest.getProcedureTime("test")
+print(procedureTime)
+TestCaseTest.assertSameBaseType(procedureTime,typeof(1),"test that a procedureTime is returned")
